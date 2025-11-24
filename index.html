@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Saeedi Course Marketplace</title>
+
   <style>
     :root{
       --primary:#4f46e5;
@@ -12,43 +13,57 @@
       --bg:#f6f6f8;
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#111827;background:var(--bg);-webkit-font-smoothing:antialiased}
-    header{background:white;border-bottom:1px solid #e6e9ee;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    body{
+      margin:0;font-family:Inter,system-ui;
+      color:#111827;background:var(--bg);
+    }
+
+    header{
+      background:white;border-bottom:1px solid #e6e9ee;
+      padding:14px 20px;display:flex;
+      align-items:center;justify-content:space-between;
+    }
+
     .logo{font-weight:700;color:var(--primary);text-decoration:none}
-    .top-actions{display:flex;gap:8px;align-items:center}
     .btn{background:var(--primary);color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
     .btn.ghost{background:transparent;color:var(--primary);border:1px solid var(--primary)}
+
     main{max-width:1100px;margin:28px auto;padding:0 18px}
+
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
-    .card{background:var(--card);border-radius:10px;padding:16px;border:1px solid #e6e9ee;box-shadow:0 6px 18px rgba(16,24,40,0.03)}
-    .course-image{height:170px;border-radius:8px;background:linear-gradient(135deg,#6e52ff,#ff6e8a);display:flex;align-items:center;justify-content:center;color:white;font-size:28px}
+    .card{background:white;border-radius:10px;padding:16px;border:1px solid #e6e9ee;box-shadow:0 6px 18px rgba(16,24,40,0.03)}
+
+    .course-image{
+      height:170px;border-radius:8px;
+      background:linear-gradient(135deg,#6e52ff,#ff6e8a);
+      display:flex;align-items:center;justify-content:center;
+      color:white;font-size:28px
+    }
+
     .course-title{font-weight:700;font-size:18px;margin:12px 0 6px}
     .course-desc{color:var(--muted);font-size:14px;margin-bottom:12px}
     .price{font-weight:800;color:#059669;font-size:18px}
-    footer{padding:20px;text-align:center;color:var(--muted);font-size:14px;margin-top:30px}
+
+    footer{text-align:center;color:var(--muted);padding:20px;font-size:14px;margin-top:30px}
+
     /* Modal */
-    .modal-back{position:fixed;inset:0;background:rgba(2,6,23,0.5);display:none;align-items:center;justify-content:center;z-index:2000;padding:16px}
+    .modal-back{
+      position:fixed;inset:0;background:rgba(0,0,0,0.45);
+      display:none;align-items:center;justify-content:center;
+      z-index:2000;padding:16px
+    }
     .modal-back.active{display:flex}
-    .modal{width:100%;max-width:720px;background:white;border-radius:10px;padding:18px;box-shadow:0 12px 40px rgba(2,6,23,0.2)}
-    .modal h3{margin:0 0 12px}
-    .row{display:flex;gap:10px;align-items:center}
-    label{display:block;font-weight:600;margin-bottom:6px}
-    input[type="text"],input[type="url"],textarea,select{width:100%;padding:10px;border:1px solid #e6e9ee;border-radius:8px;font-size:14px}
-    textarea{min-height:100px}
-    .small{font-size:13px;color:var(--muted)}
-    .qr{width:220px;height:220px;border-radius:8px;border:1px solid #eee;display:flex;align-items:center;justify-content:center;background:white}
-    .flex{display:flex;gap:12px}
-    .space-between{display:flex;justify-content:space-between;align-items:center}
-    .link-like{color:var(--primary);cursor:pointer;text-decoration:underline;background:transparent;border:0;padding:0}
-    .admin-badge{background:#eef2ff;color:var(--primary);padding:6px 10px;border-radius:999px;font-weight:600}
-    .notice{background:#fffbeb;border:1px solid #fde68a;padding:12px;border-radius:8px;color:#92400e;margin-bottom:12px}
-    .hidden{display:none}
-    .center{text-align:center}
-    .muted{color:var(--muted)}
-    .controls{display:flex;gap:8px;flex-wrap:wrap}
+
+    .modal{
+      width:100%;max-width:720px;background:white;
+      border-radius:10px;padding:18px;
+    }
+
+    .row{display:flex;gap:12px}
+    .qr{width:240px;height:240px;border-radius:8px;overflow:hidden;border:1px solid #ddd}
+
     @media (max-width:640px){
-      .row{flex-direction:column;align-items:stretch}
-      .flex{flex-direction:column}
+      .row{flex-direction:column}
     }
   </style>
 </head>
@@ -56,601 +71,168 @@
 
 <header>
   <a class="logo" href="#" onclick="showView('home')">Saeedi Courses</a>
-  <div class="top-actions">
-    <span class="admin-badge">You (Admin)</span>
+
+  <div>
     <button class="btn" id="open-admin-btn">Admin Login</button>
     <button class="btn ghost" id="open-upload-btn">Upload Course</button>
   </div>
 </header>
 
 <main>
+
+  <!-- HOME VIEW -->
   <section id="home-view">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div>
-        <h1 style="margin:0">Courses</h1>
-        <div class="small muted">No login required for buyers. Pay via UPI to access courses.</div>
-      </div>
-      <div class="controls">
-        <button class="btn ghost" onclick="openAll()">Refresh</button>
-      </div>
-    </div>
+    <h1>Courses</h1>
+    <div class="small muted">Buy via UPI — Instant Access</div>
 
-    <div id="courses-grid" class="grid">
-      <!-- cards injected -->
-    </div>
+    <div id="courses-grid" class="grid"></div>
   </section>
 
-  <!-- Thank you / access -->
+  <!-- THANK YOU VIEW -->
   <section id="thankyou-view" class="hidden">
-    <div class="card center">
-      <h2>Thank you for your purchase 🎉</h2>
-      <p class="small muted" id="ty-text">Processing...</p>
-      <div style="margin-top:14px">
-        <a id="access-link" class="btn" href="#">Open Course</a>
-      </div>
-      <div style="margin-top:12px">
-        <button class="btn ghost" onclick="showView('home')">Back to Courses</button>
-      </div>
+    <div class="card" style="text-align:center">
+      <h2>Thank you 🎉</h2>
+      <p id="ty-text"></p>
+      <a id="access-link" class="btn">Open Course</a>
+      <br><br>
+      <button class="btn ghost" onclick="showView('home')">Back</button>
     </div>
   </section>
 
-  <!-- Course Access view -->
+  <!-- ACCESS VIEW -->
   <section id="access-view" class="hidden">
     <div class="card">
-      <div style="display:flex;gap:16px;align-items:center">
-        <div style="width:120px;height:120px;border-radius:10px;background:linear-gradient(135deg,#6e52ff,#ff6e8a);display:flex;align-items:center;justify-content:center;color:white;font-size:28px" id="access-thumb">LU</div>
-        <div>
-          <h2 id="access-title" style="margin:0">Course Title</h2>
-          <div class="small muted" id="access-desc">Short description</div>
-        </div>
-      </div>
+      <h2 id="access-title"></h2>
+      <div class="small muted" id="access-desc"></div>
 
-      <hr style="margin:16px 0">
+      <hr>
 
-      <div id="access-content">
-        <!-- content list -->
-      </div>
+      <div id="access-content"></div>
 
-      <div style="margin-top:14px" class="space-between">
-        <button class="btn" onclick="showView('home')">Back to Courses</button>
-        <button class="btn ghost" onclick="downloadAll()">Download All (if files)</button>
-      </div>
+      <br>
+      <button class="btn ghost" onclick="showView('home')">Back</button>
     </div>
   </section>
 
-  <!-- Admin Login modal -->
-  <div class="modal-back" id="modal-admin-login">
-    <div class="modal">
-      <div class="space-between">
-        <h3>Admin Login</h3>
-        <button onclick="closeModal('modal-admin-login')" class="link-like">Close</button>
-      </div>
-      <p class="small muted">Enter admin password to access upload & manage panel.</p>
-      <div style="margin-top:12px">
-        <label>Password</label>
-        <input type="password" id="admin-pass" placeholder="Admin password">
-      </div>
-      <div style="margin-top:12px">
-        <button class="btn" onclick="adminLogin()">Login</button>
-        <button class="btn ghost" onclick="closeModal('modal-admin-login')">Cancel</button>
-        <div id="admin-error" class="small" style="color:#dc2626;margin-top:8px"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Upload / Manage modal (only for logged admin) -->
-  <div class="modal-back" id="modal-upload">
-    <div class="modal" style="max-width:900px">
-      <div class="space-between">
-        <h3>Upload / Manage Courses</h3>
-        <div>
-          <button class="btn ghost" onclick="adminLogout()">Logout</button>
-          <button class="btn" onclick="closeModal('modal-upload')">Close</button>
-        </div>
-      </div>
-
-      <div style="margin-top:12px" id="admin-notice" class="notice">
-        Logged in as admin. Add courses below. Buyers will pay via UPI and then click <strong>"I paid"</strong> to get access.
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 360px;gap:16px">
-        <div>
-          <label>Course Title *</label>
-          <input type="text" id="course-title" placeholder="e.g., Learn Urdu">
-
-          <label style="margin-top:8px">Short Description *</label>
-          <textarea id="course-desc" placeholder="Short course description"></textarea>
-
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <div style="flex:1">
-              <label>Price (₹)</label>
-              <input type="text" id="course-price" value="499">
-            </div>
-            <div style="flex:1">
-              <label>Access file / video URL</label>
-              <input type="url" id="course-file" placeholder="https://yourhost.com/learn-urdu.zip or video link">
-            </div>
-          </div>
-
-          <label style="margin-top:8px">Cover Image URL (optional)</label>
-          <input type="url" id="course-image" placeholder="https://...jpg">
-
-          <div style="margin-top:12px;display:flex;gap:8px">
-            <button class="btn" onclick="saveCourse()">Save Course</button>
-            <button class="btn ghost" onclick="resetForm()">Reset</button>
-          </div>
-
-          <hr style="margin:14px 0">
-
-          <h4 style="margin:0 0 8px">Existing Courses</h4>
-          <div id="admin-course-list" style="max-height:300px;overflow:auto"></div>
-        </div>
-
-        <div>
-          <h4 style="margin-top:0">Payment (UPI)</h4>
-          <div class="small muted">We will accept UPI. Your UPI ID (configured):</div>
-          <div style="margin-top:8px;padding:12px;border:1px dashed #e6e9ee;border-radius:8px">
-            <div style="font-weight:700;font-size:18px" id="admin-upi">7078297357-3@ybl</div>
-            <div class="small muted" style="margin-top:6px">Users will scan QR or click pay to open UPI apps</div>
-          </div>
-
-          <h4 style="margin-top:12px">How to verify payments</h4>
-          <ol class="small muted">
-            <li>When a buyer pays via UPI, they'll click <strong>I paid</strong> and submit transaction reference (or just mark paid).</li>
-            <li>Admin manually verifies the UPI transaction on your bank or UPI app (or ask buyer to share txn id).</li>
-            <li>Admin can then mark that buyer's purchase as verified (optional).</li>
-          </ol>
-
-          <hr style="margin:12px 0">
-
-          <h4 style="margin-top:0">Manage Purchases</h4>
-          <div id="admin-purchase-list" style="max-height:220px;overflow:auto"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Buy modal -->
+  <!-- BUY MODAL -->
   <div class="modal-back" id="modal-buy">
     <div class="modal">
-      <div class="space-between">
-        <h3 id="buy-title">Buy Course</h3>
-        <button onclick="closeModal('modal-buy')" class="link-like">Close</button>
+
+      <div style="display:flex;justify-content:space-between">
+        <h3 id="buy-title">Buy</h3>
+        <button onclick="closeModal('modal-buy')">Close</button>
       </div>
 
-      <div class="flex" style="margin-top:12px">
+      <div class="row" style="margin-top:12px">
         <div style="flex:1">
-          <p class="small muted" id="buy-desc">Course description</p>
-          <div style="margin-top:8px">
-            <div><strong>Price:</strong> ₹ <span id="buy-price">499</span></div>
-            <div class="small muted" style="margin-top:6px">Pay via UPI — UPI ID: <strong id="upi-id">7078297357-3@ybl</strong></div>
-          </div>
+          <p id="buy-desc"></p>
+          <strong>Price:</strong> ₹<span id="buy-price">0</span>
+          <br><br>
+          <strong>UPI ID:</strong> <span id="upi-id">7078297357-3@ybl</span>
 
-          <div style="margin-top:12px">
-            <label>Your name (optional)</label>
-            <input type="text" id="buyer-name" placeholder="Buyer name">
-            <label style="margin-top:8px">Transaction reference (optional)</label>
-            <input type="text" id="buyer-txn" placeholder="e.g., UPI txn id">
-          </div>
-
-          <div style="margin-top:12px;display:flex;gap:8px">
-            <button class="btn" id="open-upi-btn">Open UPI App / Pay</button>
-            <button class="btn ghost" id="paid-btn">I paid</button>
-          </div>
-
-          <div style="margin-top:10px" class="small muted">
-            After paying, click <strong>I paid</strong> and then you will get access link to the course.
-          </div>
+          <br><br>
+          <button class="btn" id="open-upi-btn">Open UPI App</button>
+          <button class="btn ghost" id="paid-btn">I Paid</button>
         </div>
 
-        <div style="width:260px">
-          <div class="small muted">QR (scan using UPI app)</div>
-          <div style="margin-top:8px" class="qr" id="qr-wrapper">
-            <!-- QR image -->
-            <img id="qr-img" src="" alt="QR" style="max-width:100%;max-height:100%;border-radius:6px"/>
-          </div>
-
-          <div style="margin-top:10px" class="small muted">
-            <button class="btn ghost" onclick="copyUPI()">Copy UPI ID</button>
-            <button class="btn" style="margin-left:8px" onclick="copyPayNote()">Copy Note</button>
+        <div>
+          <div class="small muted">Scan QR</div>
+          <div class="qr">
+            <img id="qr-img" src="/mnt/data/upi_qr.png" style="width:100%;height:100%;object-fit:cover">
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
 </main>
 
-<footer>
-  © 2025 Saeedi Courses — Built for quick uploads & UPI purchases. <span class="muted">Note: automatic payment verification not included.</span>
-</footer>
+<footer>© 2025 Saeedi Courses</footer>
 
 <script>
-/*
-  Saeedi Course Marketplace - Single file app
-  - Admin password: saeedi@7078
-  - UPI id used: 7078297357-3@ybl
-  - Courses stored in localStorage under key 'saeedi_courses_v1'
-  - Purchases stored under 'saeedi_purchases_v1'
-*/
-
+/* BASIC APP LOGIC */
 const ADMIN_PASSWORD = "saeedi@7078";
 const UPI_ID = "7078297357-3@ybl";
-const STORAGE_COURSES = "saeedi_courses_v1";
-const STORAGE_PURCHASES = "saeedi_purchases_v1";
 
-let courses = loadCourses();
-let purchases = loadPurchases();
+let courses = JSON.parse(localStorage.getItem("courses_v1") || "[]");
+let purchases = JSON.parse(localStorage.getItem("purchases_v1") || "[]");
+
 let adminLogged = false;
-let editingCourseId = null;
-let currentBuyCourseId = null;
+let currentBuy = null;
 
-document.getElementById('open-admin-btn').addEventListener('click', ()=> openModal('modal-admin-login'));
-document.getElementById('open-upload-btn').addEventListener('click', ()=> {
-  if(!adminLogged) openModal('modal-admin-login');
-  else openModal('modal-upload');
-});
+function saveCourses(){ localStorage.setItem("courses_v1", JSON.stringify(courses)); renderCourses(); }
+function savePurchases(){ localStorage.setItem("purchases_v1", JSON.stringify(purchases)); }
 
-function loadCourses(){
-  try{
-    const raw = localStorage.getItem(STORAGE_COURSES);
-    if(!raw) {
-      // seed sample course "Learn Urdu"
-      const sample = [{
-        id: genId(),
-        title: "Learn Urdu",
-        desc: "Complete Learn Urdu course — basics to advanced. (Sample)",
-        price: 499,
-        file: "", // admin should set actual downloadable URL or video URL
-        image: "",
-        createdAt: Date.now()
-      }];
-      localStorage.setItem(STORAGE_COURSES, JSON.stringify(sample));
-      return sample;
-    }
-    return JSON.parse(raw);
-  } catch(e){
-    console.error(e);
-    return [];
-  }
-}
-
-function loadPurchases(){
-  try{
-    const raw = localStorage.getItem(STORAGE_PURCHASES);
-    return raw ? JSON.parse(raw) : [];
-  } catch(e){
-    return [];
-  }
-}
-
-function saveCourses(){
-  localStorage.setItem(STORAGE_COURSES, JSON.stringify(courses));
-  renderCourses();
-  renderAdminList();
-}
-
-function savePurchases(){
-  localStorage.setItem(STORAGE_PURCHASES, JSON.stringify(purchases));
-  renderAdminPurchases();
-}
-
-// Utilities
-function genId(){ return 'c_'+Math.random().toString(36).slice(2,9); }
-function formatDate(ts){ const d=new Date(ts); return d.toLocaleString(); }
-
-// Views
-function showView(name){
-  document.querySelectorAll('main > section').forEach(s=> s.classList.add('hidden'));
-  document.getElementById(name+'-view').classList.remove('hidden');
+function showView(v){
+  document.querySelectorAll("main > section").forEach(s => s.classList.add("hidden"));
+  document.getElementById(v + "-view").classList.remove("hidden");
 }
 
 function renderCourses(){
-  const container = document.getElementById('courses-grid');
-  if(!container) return;
-  if(courses.length===0){
-    container.innerHTML = `<div class="card center">No courses yet. Admin can upload.</div>`;
+  const g = document.getElementById("courses-grid");
+  if(courses.length === 0){
+    g.innerHTML = "<div class='card'>No courses uploaded.</div>";
     return;
   }
-  container.innerHTML = courses.map(c=>{
-    const thumbText = (c.title||'Course').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
-    const img = c.image ? `<img src="${escapeHtml(c.image)}" style="width:100%;height:170px;border-radius:8px;object-fit:cover" alt="">` : `<div class="course-image">${thumbText}</div>`;
-    return `
-      <div class="card">
-        ${img}
-        <div class="course-title">${escapeHtml(c.title)}</div>
-        <div class="course-desc">${escapeHtml(c.desc||'')}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
-          <div class="price">₹${Number(c.price||0)}</div>
-          <div style="display:flex;gap:8px">
-            <button class="btn" onclick="openBuy('${c.id}')">Buy Now</button>
-            <button class="btn ghost" onclick="openAccessIfPurchased('${c.id}')">Access</button>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
 
-function escapeHtml(s){ if(!s) return ''; return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+  g.innerHTML = courses.map(c => `
+    <div class="card">
+      <div class="course-image">${c.title[0] || "C"}</div>
+      <div class="course-title">${c.title}</div>
+      <div class="course-desc">${c.desc}</div>
 
-// Buy flow
-function openBuy(courseId){
-  currentBuyCourseId = courseId;
-  const c = courses.find(x=>x.id===courseId);
-  if(!c) return alert('Course not found');
-  document.getElementById('buy-title').textContent = 'Buy — ' + c.title;
-  document.getElementById('buy-desc').textContent = c.desc || '';
-  document.getElementById('buy-price').textContent = c.price || '0';
-  document.getElementById('upi-id').textContent = UPI_ID;
-  document.getElementById('buyer-name').value = '';
-  document.getElementById('buyer-txn').value = '';
-  // generate UPI deep link
-  const payNote = encodeURIComponent(`Purchase ${c.title}`);
-  const amount = encodeURIComponent(String(c.price||0));
-  // UPI deep link (many UPI apps support this)
-  const upiLink = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent('Sahil Rajheti')}&tn=${payNote}&am=${amount}&cu=INR`;
-  // QR via Google Chart API
-  const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(upiLink)}`;
-  document.getElementById('qr-img').src = qrUrl;
-  // attach open upi
-  document.getElementById('open-upi-btn').onclick = ()=> {
-    // Try opening the upi link
-    window.location.href = upiLink;
-  };
-  document.getElementById('paid-btn').onclick = ()=> {
-    markAsPaid();
-  };
-  openModal('modal-buy');
-}
-
-// mark paid (client-side)
-function markAsPaid(){
-  const buyerName = (document.getElementById('buyer-name').value || '').trim();
-  const txn = (document.getElementById('buyer-txn').value || '').trim();
-  // create a purchase entry
-  const id = 'p_'+Math.random().toString(36).slice(2,10);
-  const course = courses.find(c=>c.id===currentBuyCourseId);
-  purchases.push({
-    id, courseId: currentBuyCourseId, courseTitle: course.title, amount: course.price, buyerName, txn, createdAt: Date.now(), verified: false
-  });
-  savePurchases();
-  closeModal('modal-buy');
-  // grant instant access locally (this is a convenience — admin should verify)
-  grantAccess(id);
-  // redirect to thankyou view
-  const tyText = `We recorded your payment entry. If you provided correct transaction details, you can open the course below. (Admin should verify UPI payment separately if needed.)`;
-  document.getElementById('ty-text').textContent = tyText;
-  // link to access
-  document.getElementById('access-link').onclick = (e)=>{ e.preventDefault(); openAccessFromPurchase(id); };
-  showView('thankyou');
-}
-
-// grant access by saving purchaseId in localStorage mapping for quick open
-function grantAccess(purchaseId){
-  // purchases already saved; we will use purchase entry to route to course access
-  // nothing else required here for client-side
-  console.log('granted access for', purchaseId);
-}
-
-function openAccessFromPurchase(purchaseId){
-  const p = purchases.find(x=>x.id===purchaseId);
-  if(!p) return alert('Purchase not found');
-  openAccess(p.courseId);
-}
-
-function openAccessIfPurchased(courseId){
-  // find purchase for this course in purchases
-  const p = purchases.find(x=>x.courseId===courseId);
-  if(!p) return alert('You have not purchased this course yet. Click Buy Now to pay via UPI.');
-  openAccess(courseId);
-}
-
-function openAccess(courseId){
-  const c = courses.find(x=>x.id===courseId);
-  if(!c) return alert('Course not found');
-  document.getElementById('access-title').textContent = c.title;
-  document.getElementById('access-desc').textContent = c.desc || '';
-  document.getElementById('access-thumb').textContent = c.title.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
-  // populate content
-  const cont = document.getElementById('access-content');
-  cont.innerHTML = '';
-  if(c.file){
-    // show download / open link
-    cont.innerHTML = `
-      <div style="display:flex;gap:10px;align-items:center">
-        <div style="flex:1">
-          <div style="font-weight:700">${escapeHtml(getFilenameFromUrl(c.file))}</div>
-          <div class="small muted">Click to open / download</div>
-        </div>
-        <div>
-          <a class="btn" href="${escapeAttr(c.file)}" target="_blank" rel="noopener">Open</a>
-        </div>
-      </div>
-    `;
-  } else {
-    cont.innerHTML = `<div class="small muted">No file provided by admin. Admin can add a file/video URL from Manage Courses.</div>`;
-  }
-  showView('access');
-}
-
-function getFilenameFromUrl(u){
-  try{
-    const p = new URL(u);
-    return decodeURIComponent(p.pathname.split('/').pop()) || u;
-  } catch(e){ return u; }
-}
-
-function escapeAttr(s){ return (s||'').replaceAll('"','&quot;'); }
-
-// Admin functions
-function openModal(id){ document.getElementById(id).classList.add('active'); }
-function closeModal(id){ document.getElementById(id).classList.remove('active'); }
-
-function adminLogin(){
-  const v = document.getElementById('admin-pass').value;
-  if(v === ADMIN_PASSWORD){
-    adminLogged = true;
-    closeModal('modal-admin-login');
-    openModal('modal-upload');
-    renderAdminList();
-    renderAdminPurchases();
-    document.getElementById('admin-error').textContent = '';
-  } else {
-    document.getElementById('admin-error').textContent = 'Incorrect password';
-  }
-}
-
-function adminLogout(){
-  adminLogged = false;
-  closeModal('modal-upload');
-  alert('Logged out');
-}
-
-// Save / manage courses
-function saveCourse(){
-  if(!adminLogged){ alert('Login as admin first'); return; }
-  const title = document.getElementById('course-title').value.trim();
-  const desc = document.getElementById('course-desc').value.trim();
-  const price = Number(document.getElementById('course-price').value || 0);
-  const file = document.getElementById('course-file').value.trim();
-  const image = document.getElementById('course-image').value.trim();
-
-  if(!title || !desc){ alert('Please enter title & description'); return; }
-
-  if(editingCourseId){
-    // update
-    const c = courses.find(x=>x.id===editingCourseId);
-    if(c){
-      c.title = title; c.desc = desc; c.price = price; c.file = file; c.image = image;
-    }
-    editingCourseId = null;
-  } else {
-    const obj = { id: genId(), title, desc, price, file, image, createdAt: Date.now() };
-    courses.unshift(obj);
-  }
-  resetForm();
-  saveCourses();
-  closeModal('modal-upload');
-  alert('Course saved');
-}
-
-function resetForm(){
-  editingCourseId = null;
-  document.getElementById('course-title').value = '';
-  document.getElementById('course-desc').value = '';
-  document.getElementById('course-price').value = '499';
-  document.getElementById('course-file').value = '';
-  document.getElementById('course-image').value = '';
-}
-
-function renderAdminList(){
-  const div = document.getElementById('admin-course-list');
-  if(!div) return;
-  if(courses.length===0){ div.innerHTML = '<div class="small muted">No courses</div>'; return; }
-  div.innerHTML = courses.map(c=>`
-    <div style="padding:8px;border-bottom:1px solid #f1f3f5;display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-weight:700">${escapeHtml(c.title)}</div>
-        <div class="small muted">${escapeHtml(c.desc.slice(0,80))}</div>
-        <div class="small muted">₹${c.price} • ${formatDate(c.createdAt)}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <button class="btn ghost" onclick="editCourse('${c.id}')">Edit</button>
-        <button class="btn" onclick="deleteCourse('${c.id}')">Delete</button>
+      <div style="display:flex;justify-content:space-between">
+        <div class="price">₹${c.price}</div>
+        <button class="btn" onclick="openBuy('${c.id}')">Buy</button>
       </div>
     </div>
-  `).join('');
+  `).join("");
 }
 
-function editCourse(id){
-  const c = courses.find(x=>x.id===id);
-  if(!c) return;
-  editingCourseId = id;
-  document.getElementById('course-title').value = c.title;
-  document.getElementById('course-desc').value = c.desc;
-  document.getElementById('course-price').value = c.price;
-  document.getElementById('course-file').value = c.file;
-  document.getElementById('course-image').value = c.image;
-}
-
-function deleteCourse(id){
-  if(!confirm('Delete this course?')) return;
-  courses = courses.filter(x=>x.id!==id);
-  saveCourses();
-}
-
-// Purchases admin
-function renderAdminPurchases(){
-  const div = document.getElementById('admin-purchase-list');
-  if(!div) return;
-  if(purchases.length===0) { div.innerHTML = '<div class="small muted">No purchases yet</div>'; return; }
-  div.innerHTML = purchases.map(p=>`
-    <div style="padding:8px;border-bottom:1px solid #f1f3f5">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-weight:700">${escapeHtml(p.courseTitle)} — ₹${p.amount}</div>
-          <div class="small muted">Buyer: ${escapeHtml(p.buyerName||'—')} • ${formatDate(p.createdAt)}</div>
-          <div class="small muted">Txn: ${escapeHtml(p.txn||'—')}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <button class="btn ghost" onclick="verifyPurchase('${p.id}')">${p.verified? 'Verified':'Verify'}</button>
-          <button class="btn" onclick="revokePurchase('${p.id}')">Revoke</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function verifyPurchase(id){
-  const p = purchases.find(x=>x.id===id);
-  if(!p) return;
-  p.verified = true;
-  savePurchases();
-  alert('Purchase marked verified');
-}
-
-function revokePurchase(id){
-  if(!confirm('Revoke this purchase (buyer will lose access)?')) return;
-  purchases = purchases.filter(x=>x.id!==id);
-  savePurchases();
-  alert('Purchase revoked');
-}
-
-// helper: copy UPI id
-function copyUPI(){
-  navigator.clipboard?.writeText(UPI_ID).then(()=> alert('UPI ID copied'));
-}
-function copyPayNote(){
-  const c = courses.find(x=>x.id===currentBuyCourseId);
-  const note = `Purchase ${c ? c.title : ''}`;
-  navigator.clipboard?.writeText(note).then(()=> alert('Payment note copied'));
-}
-
-// small utils
-function openAll(){ renderCourses(); renderAdminList(); renderAdminPurchases(); }
-
-// open access directly - used from thankyou
-function downloadAll(){
-  const c = courses.find(x=>x.id===currentBuyCourseId);
-  if(!c || !c.file) return alert('No download file provided');
-  window.open(c.file, '_blank');
-}
-
-// open access via purchase
-function openAccessFromPurchaseId(purchaseId){
-  const p = purchases.find(x=>x.id===purchaseId);
-  if(!p) return alert('Purchase not found');
-  openAccess(p.courseId);
-}
-
-// startup
-document.getElementById('admin-upi').textContent = UPI_ID;
 renderCourses();
 
-// small helper for compatibility
-if(!navigator.clipboard) window.navigator.clipboard = { writeText: (t)=> Promise.reject('no clipboard') };
+function openBuy(id){
+  currentBuy = id;
+  const c = courses.find(x => x.id === id);
 
+  document.getElementById("buy-title").textContent = "Buy — " + c.title;
+  document.getElementById("buy-desc").textContent = c.desc;
+  document.getElementById("buy-price").textContent = c.price;
+  document.getElementById("upi-id").textContent = UPI_ID;
+
+  openModal("modal-buy");
+}
+
+function markAsPaid(){
+  const c = courses.find(x => x.id === currentBuy);
+  const pid = "p_" + Math.random().toString(36).slice(2,9);
+  purchases.push({id: pid, courseId: c.id});
+  savePurchases();
+
+  closeModal("modal-buy");
+
+  document.getElementById("ty-text").textContent = "Payment noted. Open your course below.";
+  document.getElementById("access-link").onclick = ()=> openAccess(c.id);
+
+  showView("thankyou");
+}
+
+document.getElementById("paid-btn").onclick = markAsPaid;
+
+function openAccess(id){
+  const c = courses.find(x => x.id === id);
+
+  document.getElementById("access-title").textContent = c.title;
+  document.getElementById("access-desc").textContent = c.desc;
+  document.getElementById("access-content").innerHTML =
+    `<a class="btn" href="${c.file}" target="_blank">Open File</a>`;
+
+  showView("access");
+}
+
+function openModal(id){ document.getElementById(id).classList.add("active"); }
+function closeModal(id){ document.getElementById(id).classList.remove("active"); }
 </script>
 
 </body>
