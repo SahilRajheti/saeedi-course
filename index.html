@@ -1,1230 +1,657 @@
 <!doctype html>
 <html lang="en">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Course Platform</title>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Saeedi Course Marketplace</title>
   <style>
-    body {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Georgia', 'Times New Roman', serif;
-      background: #f6f6f6;
-      color: #202122;
-      width: 100%;
-      height: 100%;
-    }
-
-    html {
-      height: 100%;
-      width: 100%;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    .page-wrapper {
-      width: 100%;
-      min-height: 100%;
-      background: #f6f6f6;
-    }
-
-    /* Header Styles */
-    header {
-      background: #ffffff;
-      border-bottom: 1px solid #a2a9b1;
-      padding: 20px 0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-
-    .logo {
-      font-size: 28px;
-      font-weight: bold;
-      color: #0645ad;
-      text-decoration: none;
-    }
-
-    nav {
-      display: flex;
-      gap: 25px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    nav a {
-      color: #0645ad;
-      text-decoration: none;
-      font-size: 16px;
-      transition: color 0.3s;
-    }
-
-    nav a:hover {
-      color: #0b0080;
-      text-decoration: underline;
-    }
-
-    .admin-btn, .logout-btn {
-      background: #667eea;
-      color: white;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background 0.3s;
-    }
-
-    .admin-btn:hover, .logout-btn:hover {
-      background: #5568d3;
-    }
-
-    .logout-btn {
-      background: #dc3545;
-    }
-
-    .logout-btn:hover {
-      background: #c82333;
-    }
-
-    /* Language Selector */
-    .language-selector {
-      position: relative;
-      display: inline-block;
-    }
-
-    .language-btn {
-      background: #f8f9fa;
-      border: 1px solid #a2a9b1;
-      padding: 8px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      color: #202122;
-      transition: background 0.3s;
-    }
-
-    .language-btn:hover {
-      background: #e8e9ea;
-    }
-
-    .language-dropdown {
-      display: none;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: white;
-      border: 1px solid #a2a9b1;
-      border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      min-width: 200px;
-      max-height: 400px;
-      overflow-y: auto;
-      z-index: 1000;
-      margin-top: 5px;
-    }
-
-    .language-dropdown.active {
-      display: block;
-    }
-
-    .language-option {
-      padding: 10px 15px;
-      cursor: pointer;
-      transition: background 0.2s;
-      border-bottom: 1px solid #f0f0f0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .language-option:last-child {
-      border-bottom: none;
-    }
-
-    .language-option:hover {
-      background: #f8f9fa;
-    }
-
-    .language-option.active {
-      background: #e8f4fd;
-      font-weight: bold;
-    }
-
-    .language-flag {
-      font-size: 20px;
-    }
-
-    .language-name {
-      font-size: 14px;
-      color: #202122;
-    }
-
-    /* Hero Section */
-    .hero {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 60px 20px;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: 48px;
-      margin: 0 0 20px 0;
-      font-weight: normal;
-    }
-
-    .hero p {
-      font-size: 20px;
-      margin: 0;
-      opacity: 0.95;
-    }
-
-    /* Main Content */
-    .main-content {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 20px;
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 30px;
-    }
-
-    @media (max-width: 968px) {
-      .main-content {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Content Area */
-    .content-area {
-      background: #ffffff;
-      border: 1px solid #a2a9b1;
-      padding: 30px;
-      border-radius: 3px;
-    }
-
-    .content-area h2 {
-      border-bottom: 1px solid #a2a9b1;
-      padding-bottom: 10px;
-      margin-top: 30px;
-      margin-bottom: 20px;
-      font-size: 28px;
-      font-weight: normal;
-    }
-
-    .content-area h2:first-child {
-      margin-top: 0;
-    }
-
-    .content-area p {
-      line-height: 1.6;
-      margin-bottom: 15px;
-    }
-
-    /* Admin Panel */
-    .admin-panel {
-      display: none;
-      background: #f8f9fa;
-      border: 2px solid #667eea;
-      padding: 25px;
-      border-radius: 8px;
-      margin-bottom: 30px;
-    }
-
-    .admin-panel.active {
-      display: block;
-    }
-
-    .admin-panel h3 {
-      margin-top: 0;
-      color: #667eea;
-      font-size: 24px;
-    }
-
-    .upload-form {
-      display: grid;
-      gap: 15px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .form-group label {
-      font-weight: bold;
-      font-size: 14px;
-      color: #202122;
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      padding: 10px;
-      border: 1px solid #a2a9b1;
-      border-radius: 5px;
-      font-size: 14px;
-      font-family: inherit;
-    }
-
-    .form-group textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
-
-    .upload-btn {
-      background: #667eea;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-
-    .upload-btn:hover:not(:disabled) {
-      background: #5568d3;
-    }
-
-    .upload-btn:disabled {
-      background: #a2a9b1;
-      cursor: not-allowed;
-    }
-
-    /* Content Gallery */
-    .content-gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 25px;
-      margin-top: 25px;
-    }
-
-    .content-card {
-      background: #ffffff;
-      border: 1px solid #a2a9b1;
-      border-radius: 8px;
-      overflow: hidden;
-      transition: transform 0.3s, box-shadow 0.3s;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .content-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .content-image {
-      width: 100%;
-      height: 200px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 64px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .content-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .content-type-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(255,255,255,0.95);
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
-      color: #667eea;
-    }
-
-    .content-info {
-      padding: 20px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .content-info h3 {
-      margin: 0 0 10px 0;
-      font-size: 20px;
-      color: #202122;
-    }
-
-    .content-info p {
-      margin: 0 0 15px 0;
-      color: #54595d;
-      font-size: 14px;
-      line-height: 1.5;
-      flex: 1;
-    }
-
-    .content-price {
-      font-size: 24px;
-      font-weight: bold;
-      color: #28a745;
-      margin-bottom: 15px;
-    }
-
-    .content-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .buy-btn, .edit-btn, .delete-btn {
-      flex: 1;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-      transition: all 0.3s;
-    }
-
-    .buy-btn {
-      background: #28a745;
-      color: white;
-    }
-
-    .buy-btn:hover {
-      background: #218838;
-    }
-
-    .edit-btn {
-      background: #ffc107;
-      color: #000;
-    }
-
-    .edit-btn:hover {
-      background: #e0a800;
-    }
-
-    .delete-btn {
-      background: #dc3545;
-      color: white;
-    }
-
-    .delete-btn:hover {
-      background: #c82333;
-    }
-
-    .admin-actions {
-      display: none;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .admin-actions.active {
-      display: flex;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      background: #f8f9fa;
-      border: 1px solid #a2a9b1;
-      padding: 20px;
-      border-radius: 3px;
-      height: fit-content;
-    }
-
-    .sidebar h3 {
-      margin-top: 0;
-      font-size: 20px;
-      border-bottom: 1px solid #a2a9b1;
-      padding-bottom: 10px;
-    }
-
-    .instructor-photo {
-      width: 100%;
-      height: 200px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 5px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 72px;
-    }
-
-    .contact-info {
-      margin-top: 20px;
-    }
-
-    .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
-      padding: 10px;
-      background: white;
-      border-radius: 5px;
-      border: 1px solid #e5e5e5;
-    }
-
-    .contact-icon {
-      font-size: 20px;
-    }
-
-    .contact-text {
-      font-size: 14px;
-      word-break: break-all;
-    }
-
-    .contact-text a {
-      color: #0645ad;
-      text-decoration: none;
-    }
-
-    .contact-text a:hover {
-      text-decoration: underline;
-    }
-
+    :root{
+      --primary:#4f46e5;
+      --muted:#6b7280;
+      --card:#ffffff;
+      --bg:#f6f6f8;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#111827;background:var(--bg);-webkit-font-smoothing:antialiased}
+    header{background:white;border-bottom:1px solid #e6e9ee;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .logo{font-weight:700;color:var(--primary);text-decoration:none}
+    .top-actions{display:flex;gap:8px;align-items:center}
+    .btn{background:var(--primary);color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--primary);border:1px solid var(--primary)}
+    main{max-width:1100px;margin:28px auto;padding:0 18px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+    .card{background:var(--card);border-radius:10px;padding:16px;border:1px solid #e6e9ee;box-shadow:0 6px 18px rgba(16,24,40,0.03)}
+    .course-image{height:170px;border-radius:8px;background:linear-gradient(135deg,#6e52ff,#ff6e8a);display:flex;align-items:center;justify-content:center;color:white;font-size:28px}
+    .course-title{font-weight:700;font-size:18px;margin:12px 0 6px}
+    .course-desc{color:var(--muted);font-size:14px;margin-bottom:12px}
+    .price{font-weight:800;color:#059669;font-size:18px}
+    footer{padding:20px;text-align:center;color:var(--muted);font-size:14px;margin-top:30px}
     /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      max-width: 500px;
-      width: 100%;
-      position: relative;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      font-size: 28px;
-      cursor: pointer;
-      color: #54595d;
-      background: none;
-      border: none;
-      padding: 5px 10px;
-    }
-
-    .modal-close:hover {
-      color: #0645ad;
-    }
-
-    .modal h2 {
-      margin-top: 0;
-      color: #202122;
-    }
-
-    .modal-body {
-      margin-top: 20px;
-    }
-
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: #28a745;
-      color: white;
-      padding: 15px 25px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      z-index: 2000;
-      display: none;
-      animation: slideIn 0.3s ease;
-    }
-
-    .toast.active {
-      display: block;
-    }
-
-    .toast.error {
-      background: #dc3545;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-      }
-      to {
-        transform: translateX(0);
-      }
-    }
-
-    /* Footer */
-    footer {
-      background: #ffffff;
-      border-top: 1px solid #a2a9b1;
-      padding: 30px 20px;
-      margin-top: 50px;
-      text-align: center;
-    }
-
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      color: #54595d;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #54595d;
-    }
-
-    .empty-state-icon {
-      font-size: 64px;
-      margin-bottom: 20px;
+    .modal-back{position:fixed;inset:0;background:rgba(2,6,23,0.5);display:none;align-items:center;justify-content:center;z-index:2000;padding:16px}
+    .modal-back.active{display:flex}
+    .modal{width:100%;max-width:720px;background:white;border-radius:10px;padding:18px;box-shadow:0 12px 40px rgba(2,6,23,0.2)}
+    .modal h3{margin:0 0 12px}
+    .row{display:flex;gap:10px;align-items:center}
+    label{display:block;font-weight:600;margin-bottom:6px}
+    input[type="text"],input[type="url"],textarea,select{width:100%;padding:10px;border:1px solid #e6e9ee;border-radius:8px;font-size:14px}
+    textarea{min-height:100px}
+    .small{font-size:13px;color:var(--muted)}
+    .qr{width:220px;height:220px;border-radius:8px;border:1px solid #eee;display:flex;align-items:center;justify-content:center;background:white}
+    .flex{display:flex;gap:12px}
+    .space-between{display:flex;justify-content:space-between;align-items:center}
+    .link-like{color:var(--primary);cursor:pointer;text-decoration:underline;background:transparent;border:0;padding:0}
+    .admin-badge{background:#eef2ff;color:var(--primary);padding:6px 10px;border-radius:999px;font-weight:600}
+    .notice{background:#fffbeb;border:1px solid #fde68a;padding:12px;border-radius:8px;color:#92400e;margin-bottom:12px}
+    .hidden{display:none}
+    .center{text-align:center}
+    .muted{color:var(--muted)}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    @media (max-width:640px){
+      .row{flex-direction:column;align-items:stretch}
+      .flex{flex-direction:column}
     }
   </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
- </head>
- <body>
-  <div class="page-wrapper">
-   <header>
-    <div class="header-content"><a href="#" class="logo" id="site-title">Course Platform</a>
-     <nav><a href="#about">About</a> <a href="#gallery">Gallery</a> <a href="#contact">Contact</a>
-      <div class="language-selector"><button class="language-btn" id="language-btn"> <span class="language-flag" id="current-flag">🌐</span> <span id="current-language">English</span> <span>▼</span> </button>
-       <div class="language-dropdown" id="language-dropdown">
-        <div class="language-option active" data-lang="en"><span class="language-flag">🇬🇧</span> <span class="language-name">English</span>
-        </div>
-        <div class="language-option" data-lang="es"><span class="language-flag">🇪🇸</span> <span class="language-name">Español</span>
-        </div>
-        <div class="language-option" data-lang="fr"><span class="language-flag">🇫🇷</span> <span class="language-name">Français</span>
-        </div>
-        <div class="language-option" data-lang="de"><span class="language-flag">🇩🇪</span> <span class="language-name">Deutsch</span>
-        </div>
-        <div class="language-option" data-lang="hi"><span class="language-flag">🇮🇳</span> <span class="language-name">हिन्दी</span>
-        </div>
-        <div class="language-option" data-lang="zh"><span class="language-flag">🇨🇳</span> <span class="language-name">中文</span>
-        </div>
-        <div class="language-option" data-lang="ar"><span class="language-flag">🇸🇦</span> <span class="language-name">العربية</span>
-        </div>
-        <div class="language-option" data-lang="ja"><span class="language-flag">🇯🇵</span> <span class="language-name">日本語</span>
-        </div>
-        <div class="language-option" data-lang="pt"><span class="language-flag">🇧🇷</span> <span class="language-name">Português</span>
-        </div>
-        <div class="language-option" data-lang="ru"><span class="language-flag">🇷🇺</span> <span class="language-name">Русский</span>
-        </div>
-       </div>
-      </div><button class="admin-btn" id="admin-login-btn">Admin Login</button> <button class="logout-btn" id="logout-btn" style="display: none;">Logout</button>
-     </nav>
-    </div>
-   </header>
-   <section class="hero">
-    <h1 id="hero-heading">Learn from Expert-Led Online Courses</h1>
-    <p id="hero-description">Access high-quality educational content designed to help you achieve your learning goals</p>
-   </section>
-   <main class="main-content">
-    <div class="content-area">
-     <h2 id="about">About the Instructor</h2>
-     <p id="instructor-bio-text">Welcome! I'm a passionate educator dedicated to sharing knowledge and helping students achieve their goals. With years of experience in teaching and course development, I create comprehensive learning experiences that are both engaging and practical.</p><!-- Admin Panel -->
-     <div class="admin-panel" id="admin-panel">
-      <h3>📤 Upload Content</h3>
-      <form class="upload-form" id="upload-form">
-       <div class="form-group"><label for="content-title">Title *</label> <input type="text" id="content-title" required placeholder="Enter content title">
-       </div>
-       <div class="form-group"><label for="content-description">Description *</label> <textarea id="content-description" required placeholder="Describe your content"></textarea>
-       </div>
-       <div class="form-group"><label for="content-price">Price *</label> <input type="text" id="content-price" required placeholder="e.g., ₹999 or $29">
-       </div>
-       <div class="form-group"><label for="content-type">Type *</label> <select id="content-type" required> <option value="">Select type</option> <option value="book">📚 Book</option> <option value="video">🎥 Video Course</option> </select>
-       </div>
-       <div class="form-group"><label for="content-image">Image URL (optional)</label> <input type="url" id="content-image" placeholder="https://example.com/image.jpg">
-       </div><button type="submit" class="upload-btn" id="upload-btn">Upload Content</button>
-      </form>
-      <h3 style="margin-top: 30px; color: #667eea;">👤 Update Instructor Photo</h3>
-      <form class="upload-form" id="photo-form">
-       <div class="form-group"><label for="instructor-photo-url">Photo URL *</label> <input type="url" id="instructor-photo-url" required placeholder="https://example.com/your-photo.jpg">
-       </div><button type="submit" class="upload-btn" id="photo-btn">Update Photo</button>
-      </form>
-     </div>
-     <h2 id="gallery">Content Gallery</h2>
-     <div class="content-gallery" id="content-gallery">
-      <div class="empty-state">
-       <div class="empty-state-icon">
-        📦
-       </div>
-       <p>No content available yet. Admin can upload books and videos!</p>
-      </div>
-     </div>
-     <h2 id="contact">Get in Touch</h2>
-     <p>Feel free to reach out for course inquiries, collaborations, or any questions. I'm always happy to connect with students and fellow educators!</p>
-    </div>
-    <aside class="sidebar">
-     <h3 id="instructor-name-display">Instructor</h3>
-     <div class="instructor-photo" id="instructor-photo"><span id="instructor-emoji">👨‍🏫</span> <img id="instructor-photo-img" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 5px;" src="" alt="Instructor">
-     </div>
-     <div class="contact-info">
-      <div class="contact-item"><span class="contact-icon">📞</span> <span class="contact-text"><a href="tel:7078297357">7078297357</a></span>
-      </div>
-      <div class="contact-item"><span class="contact-icon">📧</span> <span class="contact-text"><a href="mailto:sahilkhan701766@gmail.com">sahilkhan701766@gmail.com</a></span>
-      </div>
-     </div>
-    </aside>
-   </main>
-   <footer>
-    <div class="footer-content">
-     <p>© 2024 Course Platform. All rights reserved.</p>
-     <p>Quality education accessible to everyone, everywhere.</p>
-    </div>
-   </footer><!-- Login Modal -->
-   <div class="modal" id="login-modal">
-    <div class="modal-content"><button class="modal-close" id="close-login">×</button>
-     <h2>Admin Login</h2>
-     <div class="modal-body">
-      <form class="login-form" id="login-form">
-       <div class="form-group"><label for="admin-password">Password</label> <input type="password" id="admin-password" required placeholder="Enter admin password">
-       </div><button type="submit" class="upload-btn">Login</button>
-      </form>
-     </div>
-    </div>
-   </div><!-- Purchase Modal -->
-   <div class="modal" id="purchase-modal">
-    <div class="modal-content"><button class="modal-close" id="close-purchase">×</button>
-     <h2>Purchase Information</h2>
-     <div class="modal-body">
-      <p style="line-height: 1.6; margin-bottom: 20px;">To purchase this content, please contact us:</p>
-      <div class="contact-item"><span class="contact-icon">📞</span> <span class="contact-text"><a href="tel:7078297357">7078297357</a></span>
-      </div>
-      <div class="contact-item"><span class="contact-icon">📧</span> <span class="contact-text"><a href="mailto:sahilkhan701766@gmail.com">sahilkhan701766@gmail.com</a></span>
-      </div>
-      <p style="margin-top: 20px; color: #54595d; font-size: 14px;">We'll arrange payment and delivery details via phone or email.</p>
-     </div>
-    </div>
-   </div><!-- Toast Notification -->
-   <div class="toast" id="toast"></div>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#" onclick="showView('home')">Saeedi Courses</a>
+  <div class="top-actions">
+    <span class="admin-badge">You (Admin)</span>
+    <button class="btn" id="open-admin-btn">Admin Login</button>
+    <button class="btn ghost" id="open-upload-btn">Upload Course</button>
   </div>
-  <script>
-    const defaultConfig = {
-      instructor_name: "Sahil Khan",
-      instructor_bio: "Welcome! I'm a passionate educator dedicated to sharing knowledge and helping students achieve their goals. With years of experience in teaching and course development, I create comprehensive learning experiences that are both engaging and practical.",
-      site_title: "Course Platform",
-      hero_heading: "Learn from Expert-Led Online Courses",
-      hero_description: "Access high-quality educational content designed to help you achieve your learning goals",
-      instructor_photo: "",
-      background_color: "#f6f6f6",
-      surface_color: "#ffffff",
-      text_color: "#202122",
-      primary_action_color: "#667eea",
-      secondary_action_color: "#0645ad",
-      font_family: "Georgia",
-      font_size: 16
-    };
+</header>
 
-    // Element SDK Functions
-    async function onConfigChange(config) {
-      const instructorName = config.instructor_name || defaultConfig.instructor_name;
-      const instructorBio = config.instructor_bio || defaultConfig.instructor_bio;
-      const siteTitle = config.site_title || defaultConfig.site_title;
-      const heroHeading = config.hero_heading || defaultConfig.hero_heading;
-      const heroDescription = config.hero_description || defaultConfig.hero_description;
-      const instructorPhoto = config.instructor_photo || defaultConfig.instructor_photo;
-      const backgroundColor = config.background_color || defaultConfig.background_color;
-      const surfaceColor = config.surface_color || defaultConfig.surface_color;
-      const textColor = config.text_color || defaultConfig.text_color;
-      const primaryActionColor = config.primary_action_color || defaultConfig.primary_action_color;
-      const secondaryActionColor = config.secondary_action_color || defaultConfig.secondary_action_color;
-      const fontFamily = config.font_family || defaultConfig.font_family;
-      const fontSize = config.font_size || defaultConfig.font_size;
+<main>
+  <section id="home-view">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div>
+        <h1 style="margin:0">Courses</h1>
+        <div class="small muted">No login required for buyers. Pay via UPI to access courses.</div>
+      </div>
+      <div class="controls">
+        <button class="btn ghost" onclick="openAll()">Refresh</button>
+      </div>
+    </div>
 
-      document.getElementById('instructor-name-display').textContent = instructorName;
-      document.getElementById('instructor-bio-text').textContent = instructorBio;
-      document.getElementById('site-title').textContent = siteTitle;
-      document.getElementById('hero-heading').textContent = heroHeading;
-      document.getElementById('hero-description').textContent = heroDescription;
+    <div id="courses-grid" class="grid">
+      <!-- cards injected -->
+    </div>
+  </section>
 
-      // Update instructor photo
-      const photoImg = document.getElementById('instructor-photo-img');
-      const photoEmoji = document.getElementById('instructor-emoji');
-      if (instructorPhoto) {
-        photoImg.src = instructorPhoto;
-        photoImg.style.display = 'block';
-        photoEmoji.style.display = 'none';
-      } else {
-        photoImg.style.display = 'none';
-        photoEmoji.style.display = 'flex';
-      }
+  <!-- Thank you / access -->
+  <section id="thankyou-view" class="hidden">
+    <div class="card center">
+      <h2>Thank you for your purchase 🎉</h2>
+      <p class="small muted" id="ty-text">Processing...</p>
+      <div style="margin-top:14px">
+        <a id="access-link" class="btn" href="#">Open Course</a>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn ghost" onclick="showView('home')">Back to Courses</button>
+      </div>
+    </div>
+  </section>
 
-      document.querySelector('.page-wrapper').style.background = backgroundColor;
-      document.body.style.background = backgroundColor;
-      document.body.style.color = textColor;
-      
-      const surfaceElements = document.querySelectorAll('header, .content-area, footer');
-      surfaceElements.forEach(el => el.style.background = surfaceColor);
+  <!-- Course Access view -->
+  <section id="access-view" class="hidden">
+    <div class="card">
+      <div style="display:flex;gap:16px;align-items:center">
+        <div style="width:120px;height:120px;border-radius:10px;background:linear-gradient(135deg,#6e52ff,#ff6e8a);display:flex;align-items:center;justify-content:center;color:white;font-size:28px" id="access-thumb">LU</div>
+        <div>
+          <h2 id="access-title" style="margin:0">Course Title</h2>
+          <div class="small muted" id="access-desc">Short description</div>
+        </div>
+      </div>
 
-      const textElements = document.querySelectorAll('.content-area p, .footer-content, .content-info p');
-      textElements.forEach(el => el.style.color = textColor);
+      <hr style="margin:16px 0">
 
-      const hero = document.querySelector('.hero');
-      hero.style.background = `linear-gradient(135deg, ${primaryActionColor} 0%, ${secondaryActionColor} 100%)`;
+      <div id="access-content">
+        <!-- content list -->
+      </div>
 
-      const gradientElements = document.querySelectorAll('.content-image, .instructor-photo');
-      gradientElements.forEach(el => {
-        el.style.background = `linear-gradient(135deg, ${primaryActionColor} 0%, ${secondaryActionColor} 100%)`;
-      });
+      <div style="margin-top:14px" class="space-between">
+        <button class="btn" onclick="showView('home')">Back to Courses</button>
+        <button class="btn ghost" onclick="downloadAll()">Download All (if files)</button>
+      </div>
+    </div>
+  </section>
 
-      const links = document.querySelectorAll('nav a, .contact-text a');
-      links.forEach(link => link.style.color = secondaryActionColor);
+  <!-- Admin Login modal -->
+  <div class="modal-back" id="modal-admin-login">
+    <div class="modal">
+      <div class="space-between">
+        <h3>Admin Login</h3>
+        <button onclick="closeModal('modal-admin-login')" class="link-like">Close</button>
+      </div>
+      <p class="small muted">Enter admin password to access upload & manage panel.</p>
+      <div style="margin-top:12px">
+        <label>Password</label>
+        <input type="password" id="admin-pass" placeholder="Admin password">
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn" onclick="adminLogin()">Login</button>
+        <button class="btn ghost" onclick="closeModal('modal-admin-login')">Cancel</button>
+        <div id="admin-error" class="small" style="color:#dc2626;margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
 
-      const baseFontStack = 'Georgia, Times New Roman, serif';
-      document.body.style.fontFamily = `${fontFamily}, ${baseFontStack}`;
-      document.body.style.fontSize = `${fontSize}px`;
+  <!-- Upload / Manage modal (only for logged admin) -->
+  <div class="modal-back" id="modal-upload">
+    <div class="modal" style="max-width:900px">
+      <div class="space-between">
+        <h3>Upload / Manage Courses</h3>
+        <div>
+          <button class="btn ghost" onclick="adminLogout()">Logout</button>
+          <button class="btn" onclick="closeModal('modal-upload')">Close</button>
+        </div>
+      </div>
 
-      document.querySelector('.logo').style.fontSize = `${fontSize * 1.75}px`;
-      document.querySelectorAll('nav a').forEach(el => el.style.fontSize = `${fontSize}px`);
-      document.querySelector('.hero h1').style.fontSize = `${fontSize * 3}px`;
-      document.querySelector('.hero p').style.fontSize = `${fontSize * 1.25}px`;
-      document.querySelectorAll('.content-area h2').forEach(el => el.style.fontSize = `${fontSize * 1.75}px`);
-      document.querySelectorAll('.content-area p').forEach(el => el.style.fontSize = `${fontSize}px`);
-    }
+      <div style="margin-top:12px" id="admin-notice" class="notice">
+        Logged in as admin. Add courses below. Buyers will pay via UPI and then click <strong>"I paid"</strong> to get access.
+      </div>
 
-    function mapToCapabilities(config) {
-      return {
-        recolorables: [
-          {
-            get: () => config.background_color || defaultConfig.background_color,
-            set: (value) => {
-              if (window.elementSdk) {
-                window.elementSdk.config.background_color = value;
-                window.elementSdk.setConfig({ background_color: value });
-              }
-            }
-          },
-          {
-            get: () => config.surface_color || defaultConfig.surface_color,
-            set: (value) => {
-              if (window.elementSdk) {
-                window.elementSdk.config.surface_color = value;
-                window.elementSdk.setConfig({ surface_color: value });
-              }
-            }
-          },
-          {
-            get: () => config.text_color || defaultConfig.text_color,
-            set: (value) => {
-              if (window.elementSdk) {
-                window.elementSdk.config.text_color = value;
-                window.elementSdk.setConfig({ text_color: value });
-              }
-            }
-          },
-          {
-            get: () => config.primary_action_color || defaultConfig.primary_action_color,
-            set: (value) => {
-              if (window.elementSdk) {
-                window.elementSdk.config.primary_action_color = value;
-                window.elementSdk.setConfig({ primary_action_color: value });
-              }
-            }
-          },
-          {
-            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
-            set: (value) => {
-              if (window.elementSdk) {
-                window.elementSdk.config.secondary_action_color = value;
-                window.elementSdk.setConfig({ secondary_action_color: value });
-              }
-            }
-          }
-        ],
-        borderables: [],
-        fontEditable: {
-          get: () => config.font_family || defaultConfig.font_family,
-          set: (value) => {
-            if (window.elementSdk) {
-              window.elementSdk.config.font_family = value;
-              window.elementSdk.setConfig({ font_family: value });
-            }
-          }
-        },
-        fontSizeable: {
-          get: () => config.font_size || defaultConfig.font_size,
-          set: (value) => {
-            if (window.elementSdk) {
-              window.elementSdk.config.font_size = value;
-              window.elementSdk.setConfig({ font_size: value });
-            }
-          }
-        }
-      };
-    }
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:16px">
+        <div>
+          <label>Course Title *</label>
+          <input type="text" id="course-title" placeholder="e.g., Learn Urdu">
 
-    function mapToEditPanelValues(config) {
-      return new Map([
-        ["instructor_name", config.instructor_name || defaultConfig.instructor_name],
-        ["instructor_photo", config.instructor_photo || defaultConfig.instructor_photo],
-        ["instructor_bio", config.instructor_bio || defaultConfig.instructor_bio],
-        ["site_title", config.site_title || defaultConfig.site_title],
-        ["hero_heading", config.hero_heading || defaultConfig.hero_heading],
-        ["hero_description", config.hero_description || defaultConfig.hero_description]
-      ]);
-    }
+          <label style="margin-top:8px">Short Description *</label>
+          <textarea id="course-desc" placeholder="Short course description"></textarea>
 
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange,
-        mapToCapabilities,
-        mapToEditPanelValues
-      });
-    }
-
-    // Global state
-    let isAdmin = false;
-    let contentItems = [];
-    let editingItem = null;
-    const ADMIN_PASSWORD = "admin123";
-
-    // Data SDK Handler
-    const dataHandler = {
-      onDataChanged(data) {
-        contentItems = data;
-        renderGallery();
-      }
-    };
-
-    // Initialize Data SDK
-    async function initDataSdk() {
-      if (window.dataSdk) {
-        const result = await window.dataSdk.init(dataHandler);
-        if (!result.isOk) {
-          showToast("Failed to initialize data storage", true);
-        }
-      }
-    }
-
-    initDataSdk();
-
-    // Render Gallery
-    function renderGallery() {
-      const gallery = document.getElementById('content-gallery');
-      
-      if (contentItems.length === 0) {
-        gallery.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">📦</div>
-            <p>No content available yet. Admin can upload books and videos!</p>
-          </div>
-        `;
-        return;
-      }
-
-      gallery.innerHTML = contentItems.map(item => {
-        const typeEmoji = item.type === 'book' ? '📚' : '🎥';
-        const typeLabel = item.type === 'book' ? 'Book' : 'Video';
-        
-        return `
-          <div class="content-card" data-id="${item.__backendId}">
-            <div class="content-image">
-              ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}">` : typeEmoji}
-              <span class="content-type-badge">${typeLabel}</span>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <div style="flex:1">
+              <label>Price (₹)</label>
+              <input type="text" id="course-price" value="499">
             </div>
-            <div class="content-info">
-              <h3>${item.title}</h3>
-              <p>${item.description}</p>
-              <div class="content-price">${item.price}</div>
-              <div class="content-actions">
-                <button class="buy-btn" onclick="showPurchaseModal()">Buy Now</button>
-              </div>
-              <div class="admin-actions ${isAdmin ? 'active' : ''}">
-                <button class="edit-btn" onclick="editContent('${item.__backendId}')">Edit</button>
-                <button class="delete-btn" onclick="deleteContent('${item.__backendId}')">Delete</button>
-              </div>
+            <div style="flex:1">
+              <label>Access file / video URL</label>
+              <input type="url" id="course-file" placeholder="https://yourhost.com/learn-urdu.zip or video link">
             </div>
           </div>
-        `;
-      }).join('');
+
+          <label style="margin-top:8px">Cover Image URL (optional)</label>
+          <input type="url" id="course-image" placeholder="https://...jpg">
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" onclick="saveCourse()">Save Course</button>
+            <button class="btn ghost" onclick="resetForm()">Reset</button>
+          </div>
+
+          <hr style="margin:14px 0">
+
+          <h4 style="margin:0 0 8px">Existing Courses</h4>
+          <div id="admin-course-list" style="max-height:300px;overflow:auto"></div>
+        </div>
+
+        <div>
+          <h4 style="margin-top:0">Payment (UPI)</h4>
+          <div class="small muted">We will accept UPI. Your UPI ID (configured):</div>
+          <div style="margin-top:8px;padding:12px;border:1px dashed #e6e9ee;border-radius:8px">
+            <div style="font-weight:700;font-size:18px" id="admin-upi">7078297357-3@ybl</div>
+            <div class="small muted" style="margin-top:6px">Users will scan QR or click pay to open UPI apps</div>
+          </div>
+
+          <h4 style="margin-top:12px">How to verify payments</h4>
+          <ol class="small muted">
+            <li>When a buyer pays via UPI, they'll click <strong>I paid</strong> and submit transaction reference (or just mark paid).</li>
+            <li>Admin manually verifies the UPI transaction on your bank or UPI app (or ask buyer to share txn id).</li>
+            <li>Admin can then mark that buyer's purchase as verified (optional).</li>
+          </ol>
+
+          <hr style="margin:12px 0">
+
+          <h4 style="margin-top:0">Manage Purchases</h4>
+          <div id="admin-purchase-list" style="max-height:220px;overflow:auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buy modal -->
+  <div class="modal-back" id="modal-buy">
+    <div class="modal">
+      <div class="space-between">
+        <h3 id="buy-title">Buy Course</h3>
+        <button onclick="closeModal('modal-buy')" class="link-like">Close</button>
+      </div>
+
+      <div class="flex" style="margin-top:12px">
+        <div style="flex:1">
+          <p class="small muted" id="buy-desc">Course description</p>
+          <div style="margin-top:8px">
+            <div><strong>Price:</strong> ₹ <span id="buy-price">499</span></div>
+            <div class="small muted" style="margin-top:6px">Pay via UPI — UPI ID: <strong id="upi-id">7078297357-3@ybl</strong></div>
+          </div>
+
+          <div style="margin-top:12px">
+            <label>Your name (optional)</label>
+            <input type="text" id="buyer-name" placeholder="Buyer name">
+            <label style="margin-top:8px">Transaction reference (optional)</label>
+            <input type="text" id="buyer-txn" placeholder="e.g., UPI txn id">
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="open-upi-btn">Open UPI App / Pay</button>
+            <button class="btn ghost" id="paid-btn">I paid</button>
+          </div>
+
+          <div style="margin-top:10px" class="small muted">
+            After paying, click <strong>I paid</strong> and then you will get access link to the course.
+          </div>
+        </div>
+
+        <div style="width:260px">
+          <div class="small muted">QR (scan using UPI app)</div>
+          <div style="margin-top:8px" class="qr" id="qr-wrapper">
+            <!-- QR image -->
+            <img id="qr-img" src="" alt="QR" style="max-width:100%;max-height:100%;border-radius:6px"/>
+          </div>
+
+          <div style="margin-top:10px" class="small muted">
+            <button class="btn ghost" onclick="copyUPI()">Copy UPI ID</button>
+            <button class="btn" style="margin-left:8px" onclick="copyPayNote()">Copy Note</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  © 2025 Saeedi Courses — Built for quick uploads & UPI purchases. <span class="muted">Note: automatic payment verification not included.</span>
+</footer>
+
+<script>
+/*
+  Saeedi Course Marketplace - Single file app
+  - Admin password: saeedi@7078
+  - UPI id used: 7078297357-3@ybl
+  - Courses stored in localStorage under key 'saeedi_courses_v1'
+  - Purchases stored under 'saeedi_purchases_v1'
+*/
+
+const ADMIN_PASSWORD = "saeedi@7078";
+const UPI_ID = "7078297357-3@ybl";
+const STORAGE_COURSES = "saeedi_courses_v1";
+const STORAGE_PURCHASES = "saeedi_purchases_v1";
+
+let courses = loadCourses();
+let purchases = loadPurchases();
+let adminLogged = false;
+let editingCourseId = null;
+let currentBuyCourseId = null;
+
+document.getElementById('open-admin-btn').addEventListener('click', ()=> openModal('modal-admin-login'));
+document.getElementById('open-upload-btn').addEventListener('click', ()=> {
+  if(!adminLogged) openModal('modal-admin-login');
+  else openModal('modal-upload');
+});
+
+function loadCourses(){
+  try{
+    const raw = localStorage.getItem(STORAGE_COURSES);
+    if(!raw) {
+      // seed sample course "Learn Urdu"
+      const sample = [{
+        id: genId(),
+        title: "Learn Urdu",
+        desc: "Complete Learn Urdu course — basics to advanced. (Sample)",
+        price: 499,
+        file: "", // admin should set actual downloadable URL or video URL
+        image: "",
+        createdAt: Date.now()
+      }];
+      localStorage.setItem(STORAGE_COURSES, JSON.stringify(sample));
+      return sample;
     }
+    return JSON.parse(raw);
+  } catch(e){
+    console.error(e);
+    return [];
+  }
+}
 
-    // Show Toast
-    function showToast(message, isError = false) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.className = `toast ${isError ? 'error' : ''} active`;
-      setTimeout(() => {
-        toast.classList.remove('active');
-      }, 3000);
+function loadPurchases(){
+  try{
+    const raw = localStorage.getItem(STORAGE_PURCHASES);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e){
+    return [];
+  }
+}
+
+function saveCourses(){
+  localStorage.setItem(STORAGE_COURSES, JSON.stringify(courses));
+  renderCourses();
+  renderAdminList();
+}
+
+function savePurchases(){
+  localStorage.setItem(STORAGE_PURCHASES, JSON.stringify(purchases));
+  renderAdminPurchases();
+}
+
+// Utilities
+function genId(){ return 'c_'+Math.random().toString(36).slice(2,9); }
+function formatDate(ts){ const d=new Date(ts); return d.toLocaleString(); }
+
+// Views
+function showView(name){
+  document.querySelectorAll('main > section').forEach(s=> s.classList.add('hidden'));
+  document.getElementById(name+'-view').classList.remove('hidden');
+}
+
+function renderCourses(){
+  const container = document.getElementById('courses-grid');
+  if(!container) return;
+  if(courses.length===0){
+    container.innerHTML = `<div class="card center">No courses yet. Admin can upload.</div>`;
+    return;
+  }
+  container.innerHTML = courses.map(c=>{
+    const thumbText = (c.title||'Course').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+    const img = c.image ? `<img src="${escapeHtml(c.image)}" style="width:100%;height:170px;border-radius:8px;object-fit:cover" alt="">` : `<div class="course-image">${thumbText}</div>`;
+    return `
+      <div class="card">
+        ${img}
+        <div class="course-title">${escapeHtml(c.title)}</div>
+        <div class="course-desc">${escapeHtml(c.desc||'')}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <div class="price">₹${Number(c.price||0)}</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="openBuy('${c.id}')">Buy Now</button>
+            <button class="btn ghost" onclick="openAccessIfPurchased('${c.id}')">Access</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s){ if(!s) return ''; return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+// Buy flow
+function openBuy(courseId){
+  currentBuyCourseId = courseId;
+  const c = courses.find(x=>x.id===courseId);
+  if(!c) return alert('Course not found');
+  document.getElementById('buy-title').textContent = 'Buy — ' + c.title;
+  document.getElementById('buy-desc').textContent = c.desc || '';
+  document.getElementById('buy-price').textContent = c.price || '0';
+  document.getElementById('upi-id').textContent = UPI_ID;
+  document.getElementById('buyer-name').value = '';
+  document.getElementById('buyer-txn').value = '';
+  // generate UPI deep link
+  const payNote = encodeURIComponent(`Purchase ${c.title}`);
+  const amount = encodeURIComponent(String(c.price||0));
+  // UPI deep link (many UPI apps support this)
+  const upiLink = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent('Sahil Rajheti')}&tn=${payNote}&am=${amount}&cu=INR`;
+  // QR via Google Chart API
+  const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(upiLink)}`;
+  document.getElementById('qr-img').src = qrUrl;
+  // attach open upi
+  document.getElementById('open-upi-btn').onclick = ()=> {
+    // Try opening the upi link
+    window.location.href = upiLink;
+  };
+  document.getElementById('paid-btn').onclick = ()=> {
+    markAsPaid();
+  };
+  openModal('modal-buy');
+}
+
+// mark paid (client-side)
+function markAsPaid(){
+  const buyerName = (document.getElementById('buyer-name').value || '').trim();
+  const txn = (document.getElementById('buyer-txn').value || '').trim();
+  // create a purchase entry
+  const id = 'p_'+Math.random().toString(36).slice(2,10);
+  const course = courses.find(c=>c.id===currentBuyCourseId);
+  purchases.push({
+    id, courseId: currentBuyCourseId, courseTitle: course.title, amount: course.price, buyerName, txn, createdAt: Date.now(), verified: false
+  });
+  savePurchases();
+  closeModal('modal-buy');
+  // grant instant access locally (this is a convenience — admin should verify)
+  grantAccess(id);
+  // redirect to thankyou view
+  const tyText = `We recorded your payment entry. If you provided correct transaction details, you can open the course below. (Admin should verify UPI payment separately if needed.)`;
+  document.getElementById('ty-text').textContent = tyText;
+  // link to access
+  document.getElementById('access-link').onclick = (e)=>{ e.preventDefault(); openAccessFromPurchase(id); };
+  showView('thankyou');
+}
+
+// grant access by saving purchaseId in localStorage mapping for quick open
+function grantAccess(purchaseId){
+  // purchases already saved; we will use purchase entry to route to course access
+  // nothing else required here for client-side
+  console.log('granted access for', purchaseId);
+}
+
+function openAccessFromPurchase(purchaseId){
+  const p = purchases.find(x=>x.id===purchaseId);
+  if(!p) return alert('Purchase not found');
+  openAccess(p.courseId);
+}
+
+function openAccessIfPurchased(courseId){
+  // find purchase for this course in purchases
+  const p = purchases.find(x=>x.courseId===courseId);
+  if(!p) return alert('You have not purchased this course yet. Click Buy Now to pay via UPI.');
+  openAccess(courseId);
+}
+
+function openAccess(courseId){
+  const c = courses.find(x=>x.id===courseId);
+  if(!c) return alert('Course not found');
+  document.getElementById('access-title').textContent = c.title;
+  document.getElementById('access-desc').textContent = c.desc || '';
+  document.getElementById('access-thumb').textContent = c.title.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  // populate content
+  const cont = document.getElementById('access-content');
+  cont.innerHTML = '';
+  if(c.file){
+    // show download / open link
+    cont.innerHTML = `
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="flex:1">
+          <div style="font-weight:700">${escapeHtml(getFilenameFromUrl(c.file))}</div>
+          <div class="small muted">Click to open / download</div>
+        </div>
+        <div>
+          <a class="btn" href="${escapeAttr(c.file)}" target="_blank" rel="noopener">Open</a>
+        </div>
+      </div>
+    `;
+  } else {
+    cont.innerHTML = `<div class="small muted">No file provided by admin. Admin can add a file/video URL from Manage Courses.</div>`;
+  }
+  showView('access');
+}
+
+function getFilenameFromUrl(u){
+  try{
+    const p = new URL(u);
+    return decodeURIComponent(p.pathname.split('/').pop()) || u;
+  } catch(e){ return u; }
+}
+
+function escapeAttr(s){ return (s||'').replaceAll('"','&quot;'); }
+
+// Admin functions
+function openModal(id){ document.getElementById(id).classList.add('active'); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+
+function adminLogin(){
+  const v = document.getElementById('admin-pass').value;
+  if(v === ADMIN_PASSWORD){
+    adminLogged = true;
+    closeModal('modal-admin-login');
+    openModal('modal-upload');
+    renderAdminList();
+    renderAdminPurchases();
+    document.getElementById('admin-error').textContent = '';
+  } else {
+    document.getElementById('admin-error').textContent = 'Incorrect password';
+  }
+}
+
+function adminLogout(){
+  adminLogged = false;
+  closeModal('modal-upload');
+  alert('Logged out');
+}
+
+// Save / manage courses
+function saveCourse(){
+  if(!adminLogged){ alert('Login as admin first'); return; }
+  const title = document.getElementById('course-title').value.trim();
+  const desc = document.getElementById('course-desc').value.trim();
+  const price = Number(document.getElementById('course-price').value || 0);
+  const file = document.getElementById('course-file').value.trim();
+  const image = document.getElementById('course-image').value.trim();
+
+  if(!title || !desc){ alert('Please enter title & description'); return; }
+
+  if(editingCourseId){
+    // update
+    const c = courses.find(x=>x.id===editingCourseId);
+    if(c){
+      c.title = title; c.desc = desc; c.price = price; c.file = file; c.image = image;
     }
+    editingCourseId = null;
+  } else {
+    const obj = { id: genId(), title, desc, price, file, image, createdAt: Date.now() };
+    courses.unshift(obj);
+  }
+  resetForm();
+  saveCourses();
+  closeModal('modal-upload');
+  alert('Course saved');
+}
 
-    // Admin Login
-    document.getElementById('admin-login-btn').addEventListener('click', () => {
-      document.getElementById('login-modal').classList.add('active');
-    });
+function resetForm(){
+  editingCourseId = null;
+  document.getElementById('course-title').value = '';
+  document.getElementById('course-desc').value = '';
+  document.getElementById('course-price').value = '499';
+  document.getElementById('course-file').value = '';
+  document.getElementById('course-image').value = '';
+}
 
-    document.getElementById('login-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const password = document.getElementById('admin-password').value;
-      
-      if (password === ADMIN_PASSWORD) {
-        isAdmin = true;
-        document.getElementById('admin-panel').classList.add('active');
-        document.getElementById('admin-login-btn').style.display = 'none';
-        document.getElementById('logout-btn').style.display = 'block';
-        document.getElementById('login-modal').classList.remove('active');
-        document.getElementById('admin-password').value = '';
-        showToast('Logged in successfully!');
-        renderGallery();
-      } else {
-        showToast('Invalid password!', true);
-      }
-    });
+function renderAdminList(){
+  const div = document.getElementById('admin-course-list');
+  if(!div) return;
+  if(courses.length===0){ div.innerHTML = '<div class="small muted">No courses</div>'; return; }
+  div.innerHTML = courses.map(c=>`
+    <div style="padding:8px;border-bottom:1px solid #f1f3f5;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:700">${escapeHtml(c.title)}</div>
+        <div class="small muted">${escapeHtml(c.desc.slice(0,80))}</div>
+        <div class="small muted">₹${c.price} • ${formatDate(c.createdAt)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn ghost" onclick="editCourse('${c.id}')">Edit</button>
+        <button class="btn" onclick="deleteCourse('${c.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
 
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      isAdmin = false;
-      document.getElementById('admin-panel').classList.remove('active');
-      document.getElementById('admin-login-btn').style.display = 'block';
-      document.getElementById('logout-btn').style.display = 'none';
-      showToast('Logged out successfully!');
-      renderGallery();
-    });
+function editCourse(id){
+  const c = courses.find(x=>x.id===id);
+  if(!c) return;
+  editingCourseId = id;
+  document.getElementById('course-title').value = c.title;
+  document.getElementById('course-desc').value = c.desc;
+  document.getElementById('course-price').value = c.price;
+  document.getElementById('course-file').value = c.file;
+  document.getElementById('course-image').value = c.image;
+}
 
-    // Update Instructor Photo
-    document.getElementById('photo-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const photoUrl = document.getElementById('instructor-photo-url').value;
-      const photoBtn = document.getElementById('photo-btn');
-      
-      photoBtn.disabled = true;
-      photoBtn.textContent = 'Updating...';
+function deleteCourse(id){
+  if(!confirm('Delete this course?')) return;
+  courses = courses.filter(x=>x.id!==id);
+  saveCourses();
+}
 
-      if (window.elementSdk) {
-        await window.elementSdk.setConfig({ instructor_photo: photoUrl });
-        showToast('Photo updated successfully!');
-        document.getElementById('instructor-photo-url').value = '';
-      } else {
-        showToast('Failed to update photo', true);
-      }
+// Purchases admin
+function renderAdminPurchases(){
+  const div = document.getElementById('admin-purchase-list');
+  if(!div) return;
+  if(purchases.length===0) { div.innerHTML = '<div class="small muted">No purchases yet</div>'; return; }
+  div.innerHTML = purchases.map(p=>`
+    <div style="padding:8px;border-bottom:1px solid #f1f3f5">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:700">${escapeHtml(p.courseTitle)} — ₹${p.amount}</div>
+          <div class="small muted">Buyer: ${escapeHtml(p.buyerName||'—')} • ${formatDate(p.createdAt)}</div>
+          <div class="small muted">Txn: ${escapeHtml(p.txn||'—')}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn ghost" onclick="verifyPurchase('${p.id}')">${p.verified? 'Verified':'Verify'}</button>
+          <button class="btn" onclick="revokePurchase('${p.id}')">Revoke</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
 
-      photoBtn.disabled = false;
-      photoBtn.textContent = 'Update Photo';
-    });
+function verifyPurchase(id){
+  const p = purchases.find(x=>x.id===id);
+  if(!p) return;
+  p.verified = true;
+  savePurchases();
+  alert('Purchase marked verified');
+}
 
-    // Upload Content
-    document.getElementById('upload-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      if (!window.dataSdk) {
-        showToast('Data storage not available', true);
-        return;
-      }
+function revokePurchase(id){
+  if(!confirm('Revoke this purchase (buyer will lose access)?')) return;
+  purchases = purchases.filter(x=>x.id!==id);
+  savePurchases();
+  alert('Purchase revoked');
+}
 
-      if (contentItems.length >= 999) {
-        showToast('Maximum limit of 999 items reached!', true);
-        return;
-      }
+// helper: copy UPI id
+function copyUPI(){
+  navigator.clipboard?.writeText(UPI_ID).then(()=> alert('UPI ID copied'));
+}
+function copyPayNote(){
+  const c = courses.find(x=>x.id===currentBuyCourseId);
+  const note = `Purchase ${c ? c.title : ''}`;
+  navigator.clipboard?.writeText(note).then(()=> alert('Payment note copied'));
+}
 
-      const uploadBtn = document.getElementById('upload-btn');
-      uploadBtn.disabled = true;
-      uploadBtn.textContent = 'Uploading...';
+// small utils
+function openAll(){ renderCourses(); renderAdminList(); renderAdminPurchases(); }
 
-      const newContent = {
-        title: document.getElementById('content-title').value,
-        description: document.getElementById('content-description').value,
-        price: document.getElementById('content-price').value,
-        type: document.getElementById('content-type').value,
-        imageUrl: document.getElementById('content-image').value || '',
-        createdAt: new Date().toISOString()
-      };
+// open access directly - used from thankyou
+function downloadAll(){
+  const c = courses.find(x=>x.id===currentBuyCourseId);
+  if(!c || !c.file) return alert('No download file provided');
+  window.open(c.file, '_blank');
+}
 
-      if (editingItem) {
-        const itemToUpdate = contentItems.find(item => item.__backendId === editingItem);
-        if (itemToUpdate) {
-          Object.assign(itemToUpdate, newContent);
-          const result = await window.dataSdk.update(itemToUpdate);
-          
-          if (result.isOk) {
-            showToast('Content updated successfully!');
-            editingItem = null;
-            document.getElementById('upload-form').reset();
-          } else {
-            showToast('Failed to update content', true);
-          }
-        }
-      } else {
-        const result = await window.dataSdk.create(newContent);
-        
-        if (result.isOk) {
-          showToast('Content uploaded successfully!');
-          document.getElementById('upload-form').reset();
-        } else {
-          showToast('Failed to upload content', true);
-        }
-      }
+// open access via purchase
+function openAccessFromPurchaseId(purchaseId){
+  const p = purchases.find(x=>x.id===purchaseId);
+  if(!p) return alert('Purchase not found');
+  openAccess(p.courseId);
+}
 
-      uploadBtn.disabled = false;
-      uploadBtn.textContent = 'Upload Content';
-    });
+// startup
+document.getElementById('admin-upi').textContent = UPI_ID;
+renderCourses();
 
-    // Edit Content
-    window.editContent = function(id) {
-      const item = contentItems.find(item => item.__backendId === id);
-      if (item) {
-        editingItem = id;
-        document.getElementById('content-title').value = item.title;
-        document.getElementById('content-description').value = item.description;
-        document.getElementById('content-price').value = item.price;
-        document.getElementById('content-type').value = item.type;
-        document.getElementById('content-image').value = item.imageUrl || '';
-        document.getElementById('upload-btn').textContent = 'Update Content';
-        document.getElementById('admin-panel').scrollIntoView({ behavior: 'smooth' });
-      }
-    };
+// small helper for compatibility
+if(!navigator.clipboard) window.navigator.clipboard = { writeText: (t)=> Promise.reject('no clipboard') };
 
-    // Delete Content
-    window.deleteContent = async function(id) {
-      if (!window.dataSdk) return;
+</script>
 
-      const item = contentItems.find(item => item.__backendId === id);
-      if (!item) return;
-
-      const card = document.querySelector(`[data-id="${id}"]`);
-      if (card) {
-        const deleteBtn = card.querySelector('.delete-btn');
-        const originalText = deleteBtn.textContent;
-        deleteBtn.textContent = 'Deleting...';
-        deleteBtn.disabled = true;
-
-        const result = await window.dataSdk.delete(item);
-        
-        if (result.isOk) {
-          showToast('Content deleted successfully!');
-        } else {
-          showToast('Failed to delete content', true);
-          deleteBtn.textContent = originalText;
-          deleteBtn.disabled = false;
-        }
-      }
-    };
-
-    // Purchase Modal
-    window.showPurchaseModal = function() {
-      document.getElementById('purchase-modal').classList.add('active');
-    };
-
-    document.getElementById('close-purchase').addEventListener('click', () => {
-      document.getElementById('purchase-modal').classList.remove('active');
-    });
-
-    document.getElementById('close-login').addEventListener('click', () => {
-      document.getElementById('login-modal').classList.remove('active');
-    });
-
-    // Language Translator
-    const translations = {
-      en: { about: "About", gallery: "Gallery", contact: "Contact", aboutInstructor: "About the Instructor", contentGallery: "Content Gallery", getInTouch: "Get in Touch", instructor: "Instructor" },
-      es: { about: "Acerca de", gallery: "Galería", contact: "Contacto", aboutInstructor: "Sobre el Instructor", contentGallery: "Galería de Contenido", getInTouch: "Contacta", instructor: "Instructor" },
-      fr: { about: "À propos", gallery: "Galerie", contact: "Contact", aboutInstructor: "À propos de l'instructeur", contentGallery: "Galerie de contenu", getInTouch: "Contactez-nous", instructor: "Instructeur" },
-      de: { about: "Über", gallery: "Galerie", contact: "Kontakt", aboutInstructor: "Über den Ausbilder", contentGallery: "Inhaltsgalerie", getInTouch: "Kontaktieren Sie uns", instructor: "Ausbilder" },
-      hi: { about: "के बारे में", gallery: "गैलरी", contact: "संपर्क", aboutInstructor: "प्रशिक्षक के बारे में", contentGallery: "सामग्री गैलरी", getInTouch: "संपर्क करें", instructor: "प्रशिक्षक" },
-      zh: { about: "关于", gallery: "画廊", contact: "联系", aboutInstructor: "关于讲师", contentGallery: "内容画廊", getInTouch: "联系我们", instructor: "讲师" },
-      ar: { about: "حول", gallery: "معرض", contact: "اتصل", aboutInstructor: "عن المدرب", contentGallery: "معرض المحتوى", getInTouch: "تواصل معنا", instructor: "المدرب" },
-      ja: { about: "について", gallery: "ギャラリー", contact: "お問い合わせ", aboutInstructor: "講師について", contentGallery: "コンテンツギャラリー", getInTouch: "お問い合わせください", instructor: "講師" },
-      pt: { about: "Sobre", gallery: "Galeria", contact: "Contato", aboutInstructor: "Sobre o Instrutor", contentGallery: "Galeria de Conteúdo", getInTouch: "Entre em contato", instructor: "Instrutor" },
-      ru: { about: "О нас", gallery: "Галерея", contact: "Контакт", aboutInstructor: "Об инструкторе", contentGallery: "Галерея контента", getInTouch: "Свяжитесь с нами", instructor: "Инструктор" }
-    };
-
-    const languageBtn = document.getElementById('language-btn');
-    const languageDropdown = document.getElementById('language-dropdown');
-    const languageOptions = document.querySelectorAll('.language-option');
-
-    languageBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      languageDropdown.classList.toggle('active');
-    });
-
-    document.addEventListener('click', () => {
-      languageDropdown.classList.remove('active');
-    });
-
-    languageOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        const lang = option.getAttribute('data-lang');
-        const langName = option.querySelector('.language-name').textContent;
-        const langFlag = option.querySelector('.language-flag').textContent;
-
-        document.getElementById('current-language').textContent = langName;
-        document.getElementById('current-flag').textContent = langFlag;
-
-        languageOptions.forEach(opt => opt.classList.remove('active'));
-        option.classList.add('active');
-
-        translatePage(lang);
-      });
-    });
-
-    function translatePage(lang) {
-      const t = translations[lang];
-      const navLinks = document.querySelectorAll('nav a');
-      navLinks[0].textContent = t.about;
-      navLinks[1].textContent = t.gallery;
-      navLinks[2].textContent = t.contact;
-
-      const headings = document.querySelectorAll('.content-area h2');
-      headings[0].textContent = t.aboutInstructor;
-      headings[1].textContent = t.contentGallery;
-      headings[2].textContent = t.getInTouch;
-
-      document.getElementById('instructor-name-display').textContent = t.instructor;
-    }
-
-    // Close modals on outside click
-    document.querySelectorAll('.modal').forEach(modal => {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.remove('active');
-        }
-      });
-    });
-  </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a394634b53733ba',t:'MTc2Mzk5MTE2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
