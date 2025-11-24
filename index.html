@@ -3,237 +3,704 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Saeedi Course Marketplace</title>
-
+  <title>Saeedi Course Marketplace — Admin Controlled</title>
+  <meta name="robots" content="noindex">
   <style>
     :root{
       --primary:#4f46e5;
+      --accent:#06b6d4;
       --muted:#6b7280;
       --card:#ffffff;
       --bg:#f6f6f8;
+      --success:#16a34a;
+      --danger:#dc2626;
+      --glass: rgba(255,255,255,0.85);
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0;font-family:Inter,system-ui;
-      color:#111827;background:var(--bg);
+      margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;
+      color:#111827;background:var(--bg);-webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
-
     header{
-      background:white;border-bottom:1px solid #e6e9ee;
-      padding:14px 20px;display:flex;
-      align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:20;
+      background:white;border-bottom:1px solid #e6e9ee;padding:12px 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      box-shadow:0 2px 8px rgba(16,24,40,0.02);
     }
-
-    .logo{font-weight:700;color:var(--primary);text-decoration:none}
-    .btn{background:var(--primary);color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+    .logo{font-weight:800;color:var(--primary);text-decoration:none;font-size:18px}
+    .top-actions{display:flex;gap:8px;align-items:center}
+    .btn{background:var(--primary);color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:600}
     .btn.ghost{background:transparent;color:var(--primary);border:1px solid var(--primary)}
-
-    main{max-width:1100px;margin:28px auto;padding:0 18px}
-
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
-    .card{background:white;border-radius:10px;padding:16px;border:1px solid #e6e9ee;box-shadow:0 6px 18px rgba(16,24,40,0.03)}
-
-    .course-image{
-      height:170px;border-radius:8px;
-      background:linear-gradient(135deg,#6e52ff,#ff6e8a);
-      display:flex;align-items:center;justify-content:center;
-      color:white;font-size:28px
+    .btn.warn{background:var(--danger)}
+    main{max-width:1200px;margin:26px auto;padding:0 18px}
+    .toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .search{flex:1;max-width:520px;display:flex;gap:8px}
+    input[type="text"],input[type="search"],input[type="url"],input[type="number"],textarea,select{
+      padding:10px;border:1px solid #e6e9ee;border-radius:8px;font-size:14px;width:100%;
     }
-
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+    .card{background:var(--card);border-radius:12px;padding:16px;border:1px solid #eef2f6;box-shadow:0 6px 18px rgba(16,24,40,0.03)}
+    .course-image{height:150px;border-radius:8px;background:linear-gradient(135deg,#6e52ff,#ff6e8a);display:flex;align-items:center;justify-content:center;color:white;font-size:28px}
     .course-title{font-weight:700;font-size:18px;margin:12px 0 6px}
     .course-desc{color:var(--muted);font-size:14px;margin-bottom:12px}
     .price{font-weight:800;color:#059669;font-size:18px}
+    footer{text-align:center;color:var(--muted);padding:20px;font-size:13px;margin-top:28px}
 
-    footer{text-align:center;color:var(--muted);padding:20px;font-size:14px;margin-top:30px}
-
-    /* Modal */
-    .modal-back{
-      position:fixed;inset:0;background:rgba(0,0,0,0.45);
-      display:none;align-items:center;justify-content:center;
-      z-index:2000;padding:16px
-    }
+    /* modal */
+    .modal-back{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:none;align-items:center;justify-content:center;z-index:400;padding:12px}
     .modal-back.active{display:flex}
-
-    .modal{
-      width:100%;max-width:720px;background:white;
-      border-radius:10px;padding:18px;
-    }
-
-    .row{display:flex;gap:12px}
-    .qr{width:240px;height:240px;border-radius:8px;overflow:hidden;border:1px solid #ddd}
-
-    @media (max-width:640px){
-      .row{flex-direction:column}
-    }
+    .modal{width:100%;max-width:940px;background:var(--glass);backdrop-filter:blur(6px);border-radius:12px;padding:18px;border:1px solid rgba(0,0,0,0.06)}
+    .row{display:flex;gap:12px;align-items:center}
+    .col{flex:1}
+    label{display:block;font-weight:700;margin-bottom:6px;font-size:13px}
+    .small{font-size:13px;color:var(--muted)}
+    .muted{color:var(--muted)}
+    .qr{width:220px;height:220px;border-radius:8px;border:1px solid #eee;display:flex;align-items:center;justify-content:center;background:white}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .pill{padding:6px 10px;border-radius:999px;background:#f1f5f9;color:#111;font-weight:600}
+    .meta{font-size:12px;color:var(--muted)}
+    .hidden{display:none}
+    .center{text-align:center}
+    .tag{display:inline-block;padding:6px 8px;border-radius:6px;background:#eef2ff;color:var(--primary);font-weight:700;margin-right:6px}
+    .file-link{word-break:break-word;color:var(--primary);text-decoration:underline}
+    .flex-col{display:flex;flex-direction:column;gap:8px}
+    @media (max-width:720px){ .row{flex-direction:column}.qr{width:180px;height:180px} }
   </style>
 </head>
 <body>
 
 <header>
-  <a class="logo" href="#" onclick="showView('home')">Saeedi Courses</a>
-
-  <div>
-    <button class="btn" id="open-admin-btn">Admin Login</button>
-    <button class="btn ghost" id="open-upload-btn">Upload Course</button>
+  <a class="logo" href="#" onclick="showView('home')">Saeedi Courses (Admin)</a>
+  <div class="top-actions">
+    <span class="pill" id="status-pill">Offline</span>
+    <button class="btn ghost" id="btn-upload">Manage</button>
+    <button class="btn" id="btn-login">Admin</button>
   </div>
 </header>
 
 <main>
+  <div class="toolbar">
+    <div class="search">
+      <input type="search" id="search-input" placeholder="Search courses (title / description)" oninput="renderCourses()" />
+      <select id="filter-select" onchange="renderCourses()">
+        <option value="all">All</option>
+        <option value="published">Published</option>
+        <option value="unpublished">Unpublished</option>
+      </select>
+    </div>
 
-  <!-- HOME VIEW -->
+    <div class="controls">
+      <button class="btn ghost" onclick="importData()">Import</button>
+      <button class="btn ghost" onclick="exportData()">Export</button>
+      <button class="btn" onclick="resetAllConfirm()">Reset All</button>
+    </div>
+  </div>
+
   <section id="home-view">
-    <h1>Courses</h1>
-    <div class="small muted">Buy via UPI — Instant Access</div>
-
     <div id="courses-grid" class="grid"></div>
   </section>
 
-  <!-- THANK YOU VIEW -->
   <section id="thankyou-view" class="hidden">
-    <div class="card" style="text-align:center">
+    <div class="card center">
       <h2>Thank you 🎉</h2>
-      <p id="ty-text"></p>
-      <a id="access-link" class="btn">Open Course</a>
-      <br><br>
-      <button class="btn ghost" onclick="showView('home')">Back</button>
+      <p id="ty-text" class="muted"></p>
+      <div style="margin-top:12px"><button class="btn" id="ty-open">Open Course</button></div>
+      <div style="margin-top:12px"><button class="btn ghost" onclick="showView('home')">Back to Courses</button></div>
     </div>
   </section>
 
-  <!-- ACCESS VIEW -->
   <section id="access-view" class="hidden">
     <div class="card">
-      <h2 id="access-title"></h2>
-      <div class="small muted" id="access-desc"></div>
+      <div class="row">
+        <div style="flex:1">
+          <h2 id="access-title">Course title</h2>
+          <div class="small muted" id="access-desc">desc</div>
+        </div>
+      </div>
 
       <hr>
 
-      <div id="access-content"></div>
+      <div id="access-content" class="flex-col"></div>
 
-      <br>
-      <button class="btn ghost" onclick="showView('home')">Back</button>
+      <div style="margin-top:12px" class="row">
+        <button class="btn ghost" onclick="showView('home')">Back</button>
+        <button class="btn" onclick="downloadAll()">Download / Open</button>
+      </div>
     </div>
   </section>
 
-  <!-- BUY MODAL -->
-  <div class="modal-back" id="modal-buy">
-    <div class="modal">
+</main>
 
-      <div style="display:flex;justify-content:space-between">
-        <h3 id="buy-title">Buy</h3>
-        <button onclick="closeModal('modal-buy')">Close</button>
+<!-- ADMIN LOGIN & MANAGE MODAL -->
+<div class="modal-back" id="modal-admin">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 id="admin-modal-title">Admin Panel</h3>
+      <div>
+        <button class="btn ghost" onclick="closeAdmin()">Close</button>
       </div>
+    </div>
 
-      <div class="row" style="margin-top:12px">
-        <div style="flex:1">
-          <p id="buy-desc"></p>
-          <strong>Price:</strong> ₹<span id="buy-price">0</span>
-          <br><br>
-          <strong>UPI ID:</strong> <span id="upi-id">7078297357-3@ybl</span>
-
-          <br><br>
-          <button class="btn" id="open-upi-btn">Open UPI App</button>
-          <button class="btn ghost" id="paid-btn">I Paid</button>
+    <div class="row" style="margin-top:12px">
+      <div class="col">
+        <!-- Admin Login -->
+        <div id="admin-login-box" class="">
+          <label>Admin Password</label>
+          <input type="password" id="admin-password-input" placeholder="Enter admin password" />
+          <div style="margin-top:8px" class="controls">
+            <button class="btn" onclick="adminLogin()">Login</button>
+            <button class="btn ghost" onclick="seedSample()">Seed Sample</button>
+          </div>
+          <div id="admin-login-error" class="muted" style="margin-top:8px"></div>
         </div>
 
-        <div>
-          <div class="small muted">Scan QR</div>
-          <div class="qr">
-            <img id="qr-img" src="/mnt/data/upi_qr.png" style="width:100%;height:100%;object-fit:cover">
+        <!-- Admin Controls (visible when logged in) -->
+        <div id="admin-controls" class="hidden">
+          <div style="margin-top:8px" class="small muted">Logged in as admin. Use this panel to manage courses, purchases and config.</div>
+
+          <hr>
+
+          <h4 style="margin:6px 0">Platform Settings</h4>
+          <label>Admin Password (change)</label>
+          <input type="text" id="admin-password-change" placeholder="New admin password" />
+          <label style="margin-top:8px">UPI ID</label>
+          <input type="text" id="admin-upi-input" placeholder="7078297357-3@ybl" />
+          <div style="margin-top:8px" class="controls">
+            <button class="btn" onclick="saveSettings()">Save Settings</button>
+            <button class="btn ghost" onclick="loadSettings()">Reset</button>
+          </div>
+
+          <hr>
+
+          <h4 style="margin:6px 0">Upload / Edit Course</h4>
+          <label>Title</label><input type="text" id="course-title" placeholder="Course title">
+          <label style="margin-top:8px">Description</label><textarea id="course-desc" placeholder="Short description"></textarea>
+          <div class="row" style="margin-top:8px">
+            <div style="flex:1"><label>Price (₹)</label><input type="number" id="course-price" value="499"></div>
+            <div style="flex:1"><label>Access file/video URL</label><input type="url" id="course-file" placeholder="https://..."></div>
+          </div>
+          <label style="margin-top:8px">Cover image URL (optional)</label><input type="url" id="course-image" placeholder="https://...">
+          <div style="margin-top:8px" class="controls">
+            <button class="btn" onclick="saveCourse()">Save Course</button>
+            <button class="btn ghost" onclick="resetForm()">Reset Form</button>
+          </div>
+
+          <hr>
+          <h4 style="margin:6px 0">Existing Courses</h4>
+          <div id="admin-course-list" style="max-height:220px;overflow:auto"></div>
+
+          <hr>
+          <h4 style="margin:6px 0">Purchases</h4>
+          <div id="admin-purchase-list" style="max-height:220px;overflow:auto"></div>
+
+          <hr>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <button class="btn" onclick="exportData()">Export JSON</button>
+            <button class="btn ghost" onclick="document.getElementById('import-file').click()">Import JSON</button>
+            <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
+            <button class="btn warn" onclick="resetAllConfirm()">Reset All</button>
           </div>
         </div>
       </div>
 
+      <div style="width:320px">
+        <div class="center">
+          <div class="small muted">Payment QR (will update to use configured UPI)</div>
+          <!-- Use the uploaded image in the environment -->
+          <div class="qr" style="margin-top:8px">
+            <img id="admin-qr" src="/mnt/data/upi_qr.png" alt="QR" style="width:100%;height:100%;object-fit:cover">
+          </div>
+          <div class="small muted" style="margin-top:8px">Deep link (desktop opens if app available)</div>
+          <div style="margin-top:8px"><input type="text" id="admin-upi-deeplink" readonly style="width:100%;padding:8px;border-radius:8px;border:1px solid #eee"></div>
+          <div style="margin-top:8px" class="small muted">You can download or share this QR.</div>
+        </div>
+      </div>
     </div>
+
   </div>
+</div>
 
-</main>
-
-<footer>© 2025 Saeedi Courses</footer>
+<footer>© 2025 Saeedi Courses — Manage from this single page</footer>
 
 <script>
-/* BASIC APP LOGIC */
-const ADMIN_PASSWORD = "saeedi@7078";
-const UPI_ID = "7078297357-3@ybl";
+/* ---------- Persistence Keys & Defaults ---------- */
+const KEY_COURSES = 'saeedi_courses_v2';
+const KEY_PURCHASES = 'saeedi_purchases_v2';
+const KEY_SETTINGS = 'saeedi_settings_v2';
+const KEY_ADMIN_SESSION = 'saeedi_admin_session_v2';
 
-let courses = JSON.parse(localStorage.getItem("courses_v1") || "[]");
-let purchases = JSON.parse(localStorage.getItem("purchases_v1") || "[]");
+const DEFAULT_SETTINGS = {
+  upi: '7078297357-3@ybl',
+  adminPassword: 'saeedi@7078'
+};
 
-let adminLogged = false;
-let currentBuy = null;
+/* ---------- App State ---------- */
+let courses = load(KEY_COURSES) || [];
+let purchases = load(KEY_PURCHASES) || [];
+let settings = load(KEY_SETTINGS) || DEFAULT_SETTINGS;
+let adminSession = sessionStorage.getItem(KEY_ADMIN_SESSION) === 'true';
 
-function saveCourses(){ localStorage.setItem("courses_v1", JSON.stringify(courses)); renderCourses(); }
-function savePurchases(){ localStorage.setItem("purchases_v1", JSON.stringify(purchases)); }
+/* ---------- Init ---------- */
+document.getElementById('btn-login').addEventListener('click', openAdmin);
+document.getElementById('btn-upload').addEventListener('click', openAdmin);
+document.getElementById('ty-open').addEventListener('click', ()=> {});
+document.getElementById('admin-qr').src = '/mnt/data/upi_qr.png';
+document.getElementById('admin-password-change').value = settings.adminPassword || '';
+document.getElementById('admin-upi-input').value = settings.upi || DEFAULT_SETTINGS.upi;
 
-function showView(v){
-  document.querySelectorAll("main > section").forEach(s => s.classList.add("hidden"));
-  document.getElementById(v + "-view").classList.remove("hidden");
+updateStatusPill();
+renderCourses();
+renderAdminCourseList();
+renderAdminPurchases();
+
+/* ---------- Helpers ---------- */
+function save(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+function load(key){ try{ const v=localStorage.getItem(key); return v?JSON.parse(v):null; }catch(e){ return null; } }
+function uid(prefix='c'){ return prefix + '_' + Math.random().toString(36).slice(2,10); }
+function formatDate(ts){ return new Date(ts).toLocaleString(); }
+function showView(name){
+  document.querySelectorAll('main > section').forEach(s=> s.classList.add('hidden'));
+  const el = document.getElementById(name+'-view');
+  if(el) el.classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toast(msg, error=false){ alert(msg); } // simple for now
+
+/* ---------- Settings ---------- */
+function saveSettings(){
+  const newPass = document.getElementById('admin-password-change').value.trim();
+  const newUpi = document.getElementById('admin-upi-input').value.trim();
+  if(newUpi) settings.upi = newUpi;
+  if(newPass) settings.adminPassword = newPass;
+  save(KEY_SETTINGS, settings);
+  document.getElementById('admin-upi-deeplink').value = buildUpiLink('', settings.upi);
+  toast('Settings saved');
+  document.getElementById('admin-password-change').value = '';
+  updateStatusPill();
+  renderCourses();
+}
+function loadSettings(){
+  settings = load(KEY_SETTINGS) || DEFAULT_SETTINGS;
+  document.getElementById('admin-upi-input').value = settings.upi;
+  document.getElementById('admin-password-change').value = settings.adminPassword;
+  document.getElementById('admin-upi-deeplink').value = buildUpiLink('', settings.upi);
+  toast('Loaded saved settings');
 }
 
+/* ---------- Admin Modal Controls ---------- */
+function openAdmin(){
+  document.getElementById('modal-admin').classList.add('active');
+  if(adminSession){
+    showAdminControls();
+  } else {
+    showLoginBox();
+  }
+}
+function closeAdmin(){ document.getElementById('modal-admin').classList.remove('active'); }
+function showLoginBox(){ document.getElementById('admin-login-box').classList.remove('hidden'); document.getElementById('admin-controls').classList.add('hidden'); document.getElementById('admin-modal-title').textContent='Admin Login'; }
+function showAdminControls(){ document.getElementById('admin-login-box').classList.add('hidden'); document.getElementById('admin-controls').classList.remove('hidden'); document.getElementById('admin-modal-title').textContent='Admin Panel'; document.getElementById('admin-password-input').value=''; document.getElementById('admin-upi-deeplink').value = buildUpiLink('', settings.upi); updateStatusPill(); }
+
+/* ---------- Admin Auth ---------- */
+function adminLogin(){
+  const v = document.getElementById('admin-password-input').value || '';
+  const saved = (settings.adminPassword || DEFAULT_SETTINGS.adminPassword);
+  if(v === saved){
+    adminSession = true;
+    sessionStorage.setItem(KEY_ADMIN_SESSION, 'true');
+    showAdminControls();
+    renderAdminCourseList();
+    renderAdminPurchases();
+    toast('Admin logged in');
+  } else {
+    document.getElementById('admin-login-error').textContent = 'Incorrect password';
+  }
+}
+function adminLogout(){
+  adminSession = false;
+  sessionStorage.removeItem(KEY_ADMIN_SESSION);
+  showLoginBox();
+  toast('Logged out');
+}
+function closeAdminAndSave(){ save(KEY_COURSES, courses); save(KEY_PURCHASES, purchases); save(KEY_SETTINGS, settings); closeAdmin(); }
+
+/* ---------- Courses ---------- */
+function resetForm(){
+  editingCourseId = null;
+  document.getElementById('course-title').value = '';
+  document.getElementById('course-desc').value = '';
+  document.getElementById('course-price').value = 499;
+  document.getElementById('course-file').value = '';
+  document.getElementById('course-image').value = '';
+}
+let editingCourseId = null;
+
+function saveCourse(){
+  if(!adminSession){ return toast('Login first'); }
+  const title = document.getElementById('course-title').value.trim();
+  const desc = document.getElementById('course-desc').value.trim();
+  const price = Number(document.getElementById('course-price').value || 0);
+  const file = document.getElementById('course-file').value.trim();
+  const image = document.getElementById('course-image').value.trim();
+  if(!title || !desc) return toast('Title and description required');
+
+  if(editingCourseId){
+    const c = courses.find(x=>x.id===editingCourseId);
+    if(!c) return;
+    Object.assign(c,{title,desc,price,file,image,updatedAt:Date.now()});
+    toast('Course updated');
+  } else {
+    const c = { id: uid('c'), title, desc, price, file, image, createdAt: Date.now(), published: true };
+    courses.unshift(c);
+    toast('Course created');
+  }
+  save(KEY_COURSES, courses);
+  renderCourses();
+  renderAdminCourseList();
+  resetForm();
+}
+
+function editCourse(id){
+  const c = courses.find(x=>x.id===id);
+  if(!c) return;
+  editingCourseId = id;
+  document.getElementById('course-title').value = c.title;
+  document.getElementById('course-desc').value = c.desc;
+  document.getElementById('course-price').value = c.price;
+  document.getElementById('course-file').value = c.file;
+  document.getElementById('course-image').value = c.image;
+  document.getElementById('admin-modal').scrollTo({top:0,behavior:'smooth'});
+}
+
+function togglePublish(id){
+  const c = courses.find(x=>x.id===id);
+  if(!c) return;
+  c.published = !c.published;
+  save(KEY_COURSES, courses);
+  renderCourses();
+  renderAdminCourseList();
+}
+
+function deleteCourse(id){
+  if(!confirm('Delete this course?')) return;
+  courses = courses.filter(x=>x.id!==id);
+  save(KEY_COURSES, courses);
+  renderCourses();
+  renderAdminCourseList();
+}
+
+/* ---------- Render UI ---------- */
 function renderCourses(){
-  const g = document.getElementById("courses-grid");
-  if(courses.length === 0){
-    g.innerHTML = "<div class='card'>No courses uploaded.</div>";
+  const grid = document.getElementById('courses-grid');
+  const q = (document.getElementById('search-input').value || '').toLowerCase();
+  const filter = document.getElementById('filter-select').value;
+  let list = courses.slice();
+
+  if(filter === 'published') list = list.filter(c=>c.published);
+  if(filter === 'unpublished') list = list.filter(c=>!c.published);
+  if(q) list = list.filter(c => (c.title + ' ' + c.desc).toLowerCase().includes(q));
+
+  if(list.length === 0){
+    grid.innerHTML = '<div class="card center"><div class="muted">No courses found</div></div>';
     return;
   }
 
-  g.innerHTML = courses.map(c => `
-    <div class="card">
-      <div class="course-image">${c.title[0] || "C"}</div>
-      <div class="course-title">${c.title}</div>
-      <div class="course-desc">${c.desc}</div>
+  grid.innerHTML = list.map(c => {
+    const thumb = c.image ? `<img src="${escape(c.image)}" style="width:100%;height:150px;object-fit:cover;border-radius:8px">` : `<div class="course-image">${escape(c.title[0]||'C')}</div>`;
+    const pubTag = c.published ? '<span class="tag">Published</span>' : '<span class="tag" style="background:#fff2f0;color:#991b1b">Draft</span>';
+    return `
+      <div class="card">
+        ${thumb}
+        <div class="course-title">${escape(c.title)} ${pubTag}</div>
+        <div class="course-desc">${escape(c.desc)}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+          <div class="meta">₹${Number(c.price||0)}</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="openBuy('${c.id}')">Buy</button>
+            <button class="btn ghost" onclick="openAccessIfPurchased('${c.id}')">Access</button>
+            <button class="btn ghost" onclick="copyLink('${c.id}')">Share</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 
-      <div style="display:flex;justify-content:space-between">
-        <div class="price">₹${c.price}</div>
-        <button class="btn" onclick="openBuy('${c.id}')">Buy</button>
+/* ---------- Admin Lists UI ---------- */
+function renderAdminCourseList(){
+  const node = document.getElementById('admin-course-list');
+  if(!node) return;
+  if(courses.length===0) { node.innerHTML = '<div class="muted">No courses</div>'; return; }
+  node.innerHTML = courses.map(c=>`
+    <div style="padding:8px;border-bottom:1px solid #f1f3f5;display:flex;justify-content:space-between;align-items:center">
+      <div style="flex:1">
+        <div style="font-weight:700">${escape(c.title)}</div>
+        <div class="small muted">${escape(c.desc.slice(0,80))}</div>
+        <div class="small muted">₹${c.price} • ${formatDate(c.createdAt)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:6px">
+          <button class="btn ghost" onclick="editCourse('${c.id}')">Edit</button>
+          <button class="btn" onclick="deleteCourse('${c.id}')">Delete</button>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn ghost" onclick="togglePublish('${c.id}')">${c.published? 'Unpublish' : 'Publish'}</button>
+          <button class="btn" onclick="forceGrantAccess('${c.id}')">Grant Access</button>
+        </div>
       </div>
     </div>
-  `).join("");
+  `).join('');
 }
 
-renderCourses();
-
-function openBuy(id){
-  currentBuy = id;
-  const c = courses.find(x => x.id === id);
-
-  document.getElementById("buy-title").textContent = "Buy — " + c.title;
-  document.getElementById("buy-desc").textContent = c.desc;
-  document.getElementById("buy-price").textContent = c.price;
-  document.getElementById("upi-id").textContent = UPI_ID;
-
-  openModal("modal-buy");
+/* ---------- Purchases ---------- */
+function renderAdminPurchases(){
+  const node = document.getElementById('admin-purchase-list');
+  if(!node) return;
+  if(purchases.length===0){ node.innerHTML = '<div class="muted">No purchases yet</div>'; return; }
+  node.innerHTML = purchases.map(p=>{
+    const course = courses.find(c=>c.id===p.courseId);
+    return `
+      <div style="padding:8px;border-bottom:1px solid #f1f3f5">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700">${escape(course?course.title:'-')} — ₹${p.amount || (course?course.price:'-')}</div>
+            <div class="small muted">Buyer: ${escape(p.buyerName||'—')} • ${formatDate(p.createdAt)}</div>
+            <div class="small muted">Txn: ${escape(p.txn||'—')}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button class="btn ghost" onclick="verifyPurchase('${p.id}')">${p.verified? 'Verified' : 'Verify'}</button>
+            <button class="btn" onclick="revokePurchase('${p.id}')">Revoke</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
-function markAsPaid(){
-  const c = courses.find(x => x.id === currentBuy);
-  const pid = "p_" + Math.random().toString(36).slice(2,9);
-  purchases.push({id: pid, courseId: c.id});
-  savePurchases();
-
-  closeModal("modal-buy");
-
-  document.getElementById("ty-text").textContent = "Payment noted. Open your course below.";
-  document.getElementById("access-link").onclick = ()=> openAccess(c.id);
-
-  showView("thankyou");
+function verifyPurchase(id){
+  const p = purchases.find(x=>x.id===id);
+  if(!p) return;
+  p.verified = true;
+  save(KEY_PURCHASES, purchases);
+  renderAdminPurchases();
+  toast('Purchase verified');
 }
 
-document.getElementById("paid-btn").onclick = markAsPaid;
-
-function openAccess(id){
-  const c = courses.find(x => x.id === id);
-
-  document.getElementById("access-title").textContent = c.title;
-  document.getElementById("access-desc").textContent = c.desc;
-  document.getElementById("access-content").innerHTML =
-    `<a class="btn" href="${c.file}" target="_blank">Open File</a>`;
-
-  showView("access");
+function revokePurchase(id){
+  if(!confirm('Revoke purchase?')) return;
+  purchases = purchases.filter(x=>x.id!==id);
+  save(KEY_PURCHASES, purchases);
+  renderAdminPurchases();
+  toast('Purchase revoked');
 }
 
-function openModal(id){ document.getElementById(id).classList.add("active"); }
-function closeModal(id){ document.getElementById(id).classList.remove("active"); }
+/* ---------- Buy Flow ---------- */
+let currentBuyCourseId = null;
+function openBuy(courseId){
+  currentBuyCourseId = courseId;
+  const c = courses.find(x=>x.id===courseId);
+  if(!c) return toast('Course not found');
+  // set UI
+  document.getElementById('buy-title').textContent = 'Buy — ' + c.title;
+  document.getElementById('buy-desc').textContent = c.desc;
+  document.getElementById('buy-price').textContent = c.price;
+  document.getElementById('upi-id').textContent = settings.upi || DEFAULT_SETTINGS.upi;
+  const payNote = encodeURIComponent('Purchase ' + c.title);
+  const amount = encodeURIComponent(String(c.price || 0));
+  const upiLink = buildUpiLink(amount, settings.upi || DEFAULT_SETTINGS.upi, c.title);
+  // QR via google chart (simple)
+  const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(upiLink)}`;
+  document.getElementById('qr-img').src = qrUrl;
+  document.getElementById('open-upi-btn').onclick = ()=> { window.location.href = upiLink; };
+  document.getElementById('paid-btn').onclick = ()=> { recordPayment(); };
+  openModal('modal-buy');
+}
+
+function buildUpiLink(amount = '', upi = DEFAULT_SETTINGS.upi, title = ''){
+  // upi://pay?pa=ID&pn=Name&tn=Note&am=AMOUNT&cu=INR
+  const pa = encodeURIComponent(upi);
+  const pn = encodeURIComponent('Sahil Rajheti');
+  const tn = encodeURIComponent(title || 'Purchase');
+  const am = amount ? `&am=${amount}` : '';
+  return `upi://pay?pa=${pa}&pn=${pn}&tn=${tn}${am}&cu=INR`;
+}
+
+function recordPayment(){
+  const buyerName = prompt('Enter your name (optional):') || '';
+  const txn = prompt('Enter transaction reference/UPI txn id (optional):') || '';
+  const c = courses.find(x=>x.id===currentBuyCourseId);
+  const id = uid('p');
+  purchases.push({
+    id, courseId: currentBuyCourseId, courseTitle: c.title, amount: c.price, buyerName, txn, createdAt: Date.now(), verified: false
+  });
+  save(KEY_PURCHASES, purchases);
+  closeModal('modal-buy');
+  // grant local access (convenience) by adding a mapping in purchases — admin will verify later
+  document.getElementById('ty-text').textContent = 'Payment recorded. Click Open Course to access (admin should verify if required).';
+  document.getElementById('ty-open').onclick = ()=> openAccessFromPurchase(id);
+  showView('thankyou');
+  renderAdminPurchases();
+}
+
+/* ---------- Access Logic ---------- */
+function openAccessIfPurchased(courseId){
+  // check purchases for this course (any verified or unverified)
+  const p = purchases.find(x=>x.courseId === courseId);
+  if(!p) return toast('You have not purchased this course. Click Buy to pay.');
+  openAccess(courseId);
+}
+function openAccessFromPurchase(purchaseId){
+  const p = purchases.find(x=>x.id===purchaseId);
+  if(!p) return toast('Purchase entry not found.');
+  openAccess(p.courseId);
+}
+function openAccess(courseId){
+  const c = courses.find(x=>x.id===courseId);
+  if(!c) return toast('Course not found');
+  document.getElementById('access-title').textContent = c.title;
+  document.getElementById('access-desc').textContent = c.desc;
+  const content = document.getElementById('access-content');
+  content.innerHTML = '';
+  if(c.file){
+    content.innerHTML = `<a class="btn" href="${escape(c.file)}" target="_blank" rel="noopener">Open / Download</a>`;
+  } else {
+    content.innerHTML = `<div class="muted">No access file set. Admin can add file URL in Manage panel.</div>`;
+  }
+  showView('access');
+}
+
+function downloadAll(){ const c = courses.find(x=>x.id===currentBuyCourseId); if(c && c.file) window.open(c.file,'_blank'); else toast('No file'); }
+
+/* ---------- Admin utilities ---------- */
+function forceGrantAccess(courseId){
+  // create a purchase marked verified for convenience
+  const id = uid('p');
+  const c = courses.find(x=>x.id===courseId);
+  purchases.push({ id, courseId, courseTitle: c.title, amount: c.price, buyerName: 'admin-grant', txn: 'admin', createdAt: Date.now(), verified: true });
+  save(KEY_PURCHASES, purchases);
+  renderAdminPurchases();
+  toast('Access granted (purchase created)');
+}
+
+function copyLink(courseId){
+  const url = location.origin + location.pathname + '?course=' + courseId;
+  navigator.clipboard?.writeText(url).then(()=> toast('Link copied to clipboard'), ()=> toast('Copy failed'));
+}
+
+/* ---------- Export / Import / Reset ---------- */
+function exportData(){
+  const data = { courses, purchases, settings };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'saeedi_export_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+function importData(){
+  document.getElementById('import-file').click();
+}
+function handleImport(e){
+  const f = e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(Array.isArray(data.courses)) courses = data.courses;
+      if(Array.isArray(data.purchases)) purchases = data.purchases;
+      if(data.settings) settings = data.settings;
+      save(KEY_COURSES, courses);
+      save(KEY_PURCHASES, purchases);
+      save(KEY_SETTINGS, settings);
+      document.getElementById('admin-upi-input').value = settings.upi || DEFAULT_SETTINGS.upi;
+      toast('Import successful');
+      renderCourses(); renderAdminCourseList(); renderAdminPurchases();
+    }catch(err){ toast('Invalid JSON file', true); }
+  };
+  reader.readAsText(f);
+  e.target.value = '';
+}
+
+function resetAllConfirm(){
+  if(!confirm('Reset ALL data (courses, purchases, settings) — this CANNOT be undone. Continue?')) return;
+  localStorage.removeItem(KEY_COURSES);
+  localStorage.removeItem(KEY_PURCHASES);
+  localStorage.removeItem(KEY_SETTINGS);
+  sessionStorage.removeItem(KEY_ADMIN_SESSION);
+  courses = []; purchases = []; settings = DEFAULT_SETTINGS; adminSession = false;
+  renderCourses(); renderAdminCourseList(); renderAdminPurchases(); loadSettings();
+  toast('Reset complete');
+}
+
+/* ---------- Seed sample ---------- */
+function seedSample(){
+  if(courses.length>0 && !confirm('Courses exist — add sample anyway?')) return;
+  const sample = {
+    id: uid('c'),
+    title: 'Learn Urdu',
+    desc: 'Complete Learn Urdu course — basics to advanced.',
+    price: 499,
+    file: '',
+    image: '',
+    published: true,
+    createdAt: Date.now()
+  };
+  courses.unshift(sample);
+  save(KEY_COURSES, courses);
+  renderCourses();
+  renderAdminCourseList();
+  toast('Sample course added');
+}
+
+/* ---------- Utility UI ---------- */
+function updateStatusPill(){
+  const pill = document.getElementById('status-pill');
+  pill.textContent = adminSession ? 'Admin' : 'Public';
+}
+
+/* ---------- Small helpers & safety ---------- */
+function escape(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+function openModal(id){ document.getElementById(id).classList.add('active'); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+
+/* ---------- Simple startup load ---------- */
+(function startup(){
+  // ensure settings exist
+  if(!settings) { settings = DEFAULT_SETTINGS; save(KEY_SETTINGS, settings); }
+  document.getElementById('admin-upi-input').value = settings.upi;
+  renderCourses();
+
+  // Auto open course if URL param present (share link)
+  const params = new URLSearchParams(location.search);
+  const cid = params.get('course');
+  if(cid){
+    // if purchased show; else show buy modal
+    const p = purchases.find(x=>x.courseId===cid && x.verified);
+    if(p) openAccess(cid); else openBuy(cid);
+  }
+})();
+
+/* ---------- Lightweight functions for saving ---------- */
+function save(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+function saveCoursesToStorage(){ save(KEY_COURSES, courses); }
+function savePurchasesToStorage(){ save(KEY_PURCHASES, purchases); }
+
+/* ---------- Stubs used by UI (some buttons) ---------- */
+function adminLogout(){ adminSession=false; sessionStorage.removeItem(KEY_ADMIN_SESSION); showLoginBox(); updateStatusPill(); toast('Logged out'); }
+
+/* ---------- Small DOM hookups ---------- */
+document.getElementById('search-input').addEventListener('input', renderCourses);
+document.getElementById('filter-select').addEventListener('change', renderCourses);
+document.getElementById('btn-login').addEventListener('click', openAdmin);
+document.getElementById('btn-upload').addEventListener('click', openAdmin);
+
+/* ---------- When saving lists ---------- */
+function saveCourses(){ save(KEY_COURSES, courses); renderCourses(); renderAdminCourseList(); }
+function savePurchases(){ save(KEY_PURCHASES, purchases); renderAdminPurchases(); }
+
+/* ---------- End ---------- */
 </script>
-
 </body>
 </html>
