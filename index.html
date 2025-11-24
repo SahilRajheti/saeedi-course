@@ -1,0 +1,1230 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Platform</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: #f6f6f6;
+      color: #202122;
+      width: 100%;
+      height: 100%;
+    }
+
+    html {
+      height: 100%;
+      width: 100%;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .page-wrapper {
+      width: 100%;
+      min-height: 100%;
+      background: #f6f6f6;
+    }
+
+    /* Header Styles */
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #a2a9b1;
+      padding: 20px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #0645ad;
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    nav a {
+      color: #0645ad;
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #0b0080;
+      text-decoration: underline;
+    }
+
+    .admin-btn, .logout-btn {
+      background: #667eea;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .admin-btn:hover, .logout-btn:hover {
+      background: #5568d3;
+    }
+
+    .logout-btn {
+      background: #dc3545;
+    }
+
+    .logout-btn:hover {
+      background: #c82333;
+    }
+
+    /* Language Selector */
+    .language-selector {
+      position: relative;
+      display: inline-block;
+    }
+
+    .language-btn {
+      background: #f8f9fa;
+      border: 1px solid #a2a9b1;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #202122;
+      transition: background 0.3s;
+    }
+
+    .language-btn:hover {
+      background: #e8e9ea;
+    }
+
+    .language-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border: 1px solid #a2a9b1;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      min-width: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      z-index: 1000;
+      margin-top: 5px;
+    }
+
+    .language-dropdown.active {
+      display: block;
+    }
+
+    .language-option {
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .language-option:last-child {
+      border-bottom: none;
+    }
+
+    .language-option:hover {
+      background: #f8f9fa;
+    }
+
+    .language-option.active {
+      background: #e8f4fd;
+      font-weight: bold;
+    }
+
+    .language-flag {
+      font-size: 20px;
+    }
+
+    .language-name {
+      font-size: 14px;
+      color: #202122;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      margin: 0 0 20px 0;
+      font-weight: normal;
+    }
+
+    .hero p {
+      font-size: 20px;
+      margin: 0;
+      opacity: 0.95;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 30px;
+    }
+
+    @media (max-width: 968px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Content Area */
+    .content-area {
+      background: #ffffff;
+      border: 1px solid #a2a9b1;
+      padding: 30px;
+      border-radius: 3px;
+    }
+
+    .content-area h2 {
+      border-bottom: 1px solid #a2a9b1;
+      padding-bottom: 10px;
+      margin-top: 30px;
+      margin-bottom: 20px;
+      font-size: 28px;
+      font-weight: normal;
+    }
+
+    .content-area h2:first-child {
+      margin-top: 0;
+    }
+
+    .content-area p {
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    /* Admin Panel */
+    .admin-panel {
+      display: none;
+      background: #f8f9fa;
+      border: 2px solid #667eea;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    .admin-panel.active {
+      display: block;
+    }
+
+    .admin-panel h3 {
+      margin-top: 0;
+      color: #667eea;
+      font-size: 24px;
+    }
+
+    .upload-form {
+      display: grid;
+      gap: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      font-size: 14px;
+      color: #202122;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      padding: 10px;
+      border: 1px solid #a2a9b1;
+      border-radius: 5px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .upload-btn {
+      background: #667eea;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .upload-btn:hover:not(:disabled) {
+      background: #5568d3;
+    }
+
+    .upload-btn:disabled {
+      background: #a2a9b1;
+      cursor: not-allowed;
+    }
+
+    /* Content Gallery */
+    .content-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+      margin-top: 25px;
+    }
+
+    .content-card {
+      background: #ffffff;
+      border: 1px solid #a2a9b1;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .content-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .content-type-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.95);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .content-info {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-info h3 {
+      margin: 0 0 10px 0;
+      font-size: 20px;
+      color: #202122;
+    }
+
+    .content-info p {
+      margin: 0 0 15px 0;
+      color: #54595d;
+      font-size: 14px;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .content-price {
+      font-size: 24px;
+      font-weight: bold;
+      color: #28a745;
+      margin-bottom: 15px;
+    }
+
+    .content-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .buy-btn, .edit-btn, .delete-btn {
+      flex: 1;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .buy-btn {
+      background: #28a745;
+      color: white;
+    }
+
+    .buy-btn:hover {
+      background: #218838;
+    }
+
+    .edit-btn {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .edit-btn:hover {
+      background: #e0a800;
+    }
+
+    .delete-btn {
+      background: #dc3545;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background: #c82333;
+    }
+
+    .admin-actions {
+      display: none;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .admin-actions.active {
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: #f8f9fa;
+      border: 1px solid #a2a9b1;
+      padding: 20px;
+      border-radius: 3px;
+      height: fit-content;
+    }
+
+    .sidebar h3 {
+      margin-top: 0;
+      font-size: 20px;
+      border-bottom: 1px solid #a2a9b1;
+      padding-bottom: 10px;
+    }
+
+    .instructor-photo {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 5px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+    }
+
+    .contact-info {
+      margin-top: 20px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: white;
+      border-radius: 5px;
+      border: 1px solid #e5e5e5;
+    }
+
+    .contact-icon {
+      font-size: 20px;
+    }
+
+    .contact-text {
+      font-size: 14px;
+      word-break: break-all;
+    }
+
+    .contact-text a {
+      color: #0645ad;
+      text-decoration: none;
+    }
+
+    .contact-text a:hover {
+      text-decoration: underline;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #54595d;
+      background: none;
+      border: none;
+      padding: 5px 10px;
+    }
+
+    .modal-close:hover {
+      color: #0645ad;
+    }
+
+    .modal h2 {
+      margin-top: 0;
+      color: #202122;
+    }
+
+    .modal-body {
+      margin-top: 20px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #28a745;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 2000;
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast.active {
+      display: block;
+    }
+
+    .toast.error {
+      background: #dc3545;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    /* Footer */
+    footer {
+      background: #ffffff;
+      border-top: 1px solid #a2a9b1;
+      padding: 30px 20px;
+      margin-top: 50px;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      color: #54595d;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #54595d;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="page-wrapper">
+   <header>
+    <div class="header-content"><a href="#" class="logo" id="site-title">Course Platform</a>
+     <nav><a href="#about">About</a> <a href="#gallery">Gallery</a> <a href="#contact">Contact</a>
+      <div class="language-selector"><button class="language-btn" id="language-btn"> <span class="language-flag" id="current-flag">🌐</span> <span id="current-language">English</span> <span>▼</span> </button>
+       <div class="language-dropdown" id="language-dropdown">
+        <div class="language-option active" data-lang="en"><span class="language-flag">🇬🇧</span> <span class="language-name">English</span>
+        </div>
+        <div class="language-option" data-lang="es"><span class="language-flag">🇪🇸</span> <span class="language-name">Español</span>
+        </div>
+        <div class="language-option" data-lang="fr"><span class="language-flag">🇫🇷</span> <span class="language-name">Français</span>
+        </div>
+        <div class="language-option" data-lang="de"><span class="language-flag">🇩🇪</span> <span class="language-name">Deutsch</span>
+        </div>
+        <div class="language-option" data-lang="hi"><span class="language-flag">🇮🇳</span> <span class="language-name">हिन्दी</span>
+        </div>
+        <div class="language-option" data-lang="zh"><span class="language-flag">🇨🇳</span> <span class="language-name">中文</span>
+        </div>
+        <div class="language-option" data-lang="ar"><span class="language-flag">🇸🇦</span> <span class="language-name">العربية</span>
+        </div>
+        <div class="language-option" data-lang="ja"><span class="language-flag">🇯🇵</span> <span class="language-name">日本語</span>
+        </div>
+        <div class="language-option" data-lang="pt"><span class="language-flag">🇧🇷</span> <span class="language-name">Português</span>
+        </div>
+        <div class="language-option" data-lang="ru"><span class="language-flag">🇷🇺</span> <span class="language-name">Русский</span>
+        </div>
+       </div>
+      </div><button class="admin-btn" id="admin-login-btn">Admin Login</button> <button class="logout-btn" id="logout-btn" style="display: none;">Logout</button>
+     </nav>
+    </div>
+   </header>
+   <section class="hero">
+    <h1 id="hero-heading">Learn from Expert-Led Online Courses</h1>
+    <p id="hero-description">Access high-quality educational content designed to help you achieve your learning goals</p>
+   </section>
+   <main class="main-content">
+    <div class="content-area">
+     <h2 id="about">About the Instructor</h2>
+     <p id="instructor-bio-text">Welcome! I'm a passionate educator dedicated to sharing knowledge and helping students achieve their goals. With years of experience in teaching and course development, I create comprehensive learning experiences that are both engaging and practical.</p><!-- Admin Panel -->
+     <div class="admin-panel" id="admin-panel">
+      <h3>📤 Upload Content</h3>
+      <form class="upload-form" id="upload-form">
+       <div class="form-group"><label for="content-title">Title *</label> <input type="text" id="content-title" required placeholder="Enter content title">
+       </div>
+       <div class="form-group"><label for="content-description">Description *</label> <textarea id="content-description" required placeholder="Describe your content"></textarea>
+       </div>
+       <div class="form-group"><label for="content-price">Price *</label> <input type="text" id="content-price" required placeholder="e.g., ₹999 or $29">
+       </div>
+       <div class="form-group"><label for="content-type">Type *</label> <select id="content-type" required> <option value="">Select type</option> <option value="book">📚 Book</option> <option value="video">🎥 Video Course</option> </select>
+       </div>
+       <div class="form-group"><label for="content-image">Image URL (optional)</label> <input type="url" id="content-image" placeholder="https://example.com/image.jpg">
+       </div><button type="submit" class="upload-btn" id="upload-btn">Upload Content</button>
+      </form>
+      <h3 style="margin-top: 30px; color: #667eea;">👤 Update Instructor Photo</h3>
+      <form class="upload-form" id="photo-form">
+       <div class="form-group"><label for="instructor-photo-url">Photo URL *</label> <input type="url" id="instructor-photo-url" required placeholder="https://example.com/your-photo.jpg">
+       </div><button type="submit" class="upload-btn" id="photo-btn">Update Photo</button>
+      </form>
+     </div>
+     <h2 id="gallery">Content Gallery</h2>
+     <div class="content-gallery" id="content-gallery">
+      <div class="empty-state">
+       <div class="empty-state-icon">
+        📦
+       </div>
+       <p>No content available yet. Admin can upload books and videos!</p>
+      </div>
+     </div>
+     <h2 id="contact">Get in Touch</h2>
+     <p>Feel free to reach out for course inquiries, collaborations, or any questions. I'm always happy to connect with students and fellow educators!</p>
+    </div>
+    <aside class="sidebar">
+     <h3 id="instructor-name-display">Instructor</h3>
+     <div class="instructor-photo" id="instructor-photo"><span id="instructor-emoji">👨‍🏫</span> <img id="instructor-photo-img" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 5px;" src="" alt="Instructor">
+     </div>
+     <div class="contact-info">
+      <div class="contact-item"><span class="contact-icon">📞</span> <span class="contact-text"><a href="tel:7078297357">7078297357</a></span>
+      </div>
+      <div class="contact-item"><span class="contact-icon">📧</span> <span class="contact-text"><a href="mailto:sahilkhan701766@gmail.com">sahilkhan701766@gmail.com</a></span>
+      </div>
+     </div>
+    </aside>
+   </main>
+   <footer>
+    <div class="footer-content">
+     <p>© 2024 Course Platform. All rights reserved.</p>
+     <p>Quality education accessible to everyone, everywhere.</p>
+    </div>
+   </footer><!-- Login Modal -->
+   <div class="modal" id="login-modal">
+    <div class="modal-content"><button class="modal-close" id="close-login">×</button>
+     <h2>Admin Login</h2>
+     <div class="modal-body">
+      <form class="login-form" id="login-form">
+       <div class="form-group"><label for="admin-password">Password</label> <input type="password" id="admin-password" required placeholder="Enter admin password">
+       </div><button type="submit" class="upload-btn">Login</button>
+      </form>
+     </div>
+    </div>
+   </div><!-- Purchase Modal -->
+   <div class="modal" id="purchase-modal">
+    <div class="modal-content"><button class="modal-close" id="close-purchase">×</button>
+     <h2>Purchase Information</h2>
+     <div class="modal-body">
+      <p style="line-height: 1.6; margin-bottom: 20px;">To purchase this content, please contact us:</p>
+      <div class="contact-item"><span class="contact-icon">📞</span> <span class="contact-text"><a href="tel:7078297357">7078297357</a></span>
+      </div>
+      <div class="contact-item"><span class="contact-icon">📧</span> <span class="contact-text"><a href="mailto:sahilkhan701766@gmail.com">sahilkhan701766@gmail.com</a></span>
+      </div>
+      <p style="margin-top: 20px; color: #54595d; font-size: 14px;">We'll arrange payment and delivery details via phone or email.</p>
+     </div>
+    </div>
+   </div><!-- Toast Notification -->
+   <div class="toast" id="toast"></div>
+  </div>
+  <script>
+    const defaultConfig = {
+      instructor_name: "Sahil Khan",
+      instructor_bio: "Welcome! I'm a passionate educator dedicated to sharing knowledge and helping students achieve their goals. With years of experience in teaching and course development, I create comprehensive learning experiences that are both engaging and practical.",
+      site_title: "Course Platform",
+      hero_heading: "Learn from Expert-Led Online Courses",
+      hero_description: "Access high-quality educational content designed to help you achieve your learning goals",
+      instructor_photo: "",
+      background_color: "#f6f6f6",
+      surface_color: "#ffffff",
+      text_color: "#202122",
+      primary_action_color: "#667eea",
+      secondary_action_color: "#0645ad",
+      font_family: "Georgia",
+      font_size: 16
+    };
+
+    // Element SDK Functions
+    async function onConfigChange(config) {
+      const instructorName = config.instructor_name || defaultConfig.instructor_name;
+      const instructorBio = config.instructor_bio || defaultConfig.instructor_bio;
+      const siteTitle = config.site_title || defaultConfig.site_title;
+      const heroHeading = config.hero_heading || defaultConfig.hero_heading;
+      const heroDescription = config.hero_description || defaultConfig.hero_description;
+      const instructorPhoto = config.instructor_photo || defaultConfig.instructor_photo;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryActionColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryActionColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+
+      document.getElementById('instructor-name-display').textContent = instructorName;
+      document.getElementById('instructor-bio-text').textContent = instructorBio;
+      document.getElementById('site-title').textContent = siteTitle;
+      document.getElementById('hero-heading').textContent = heroHeading;
+      document.getElementById('hero-description').textContent = heroDescription;
+
+      // Update instructor photo
+      const photoImg = document.getElementById('instructor-photo-img');
+      const photoEmoji = document.getElementById('instructor-emoji');
+      if (instructorPhoto) {
+        photoImg.src = instructorPhoto;
+        photoImg.style.display = 'block';
+        photoEmoji.style.display = 'none';
+      } else {
+        photoImg.style.display = 'none';
+        photoEmoji.style.display = 'flex';
+      }
+
+      document.querySelector('.page-wrapper').style.background = backgroundColor;
+      document.body.style.background = backgroundColor;
+      document.body.style.color = textColor;
+      
+      const surfaceElements = document.querySelectorAll('header, .content-area, footer');
+      surfaceElements.forEach(el => el.style.background = surfaceColor);
+
+      const textElements = document.querySelectorAll('.content-area p, .footer-content, .content-info p');
+      textElements.forEach(el => el.style.color = textColor);
+
+      const hero = document.querySelector('.hero');
+      hero.style.background = `linear-gradient(135deg, ${primaryActionColor} 0%, ${secondaryActionColor} 100%)`;
+
+      const gradientElements = document.querySelectorAll('.content-image, .instructor-photo');
+      gradientElements.forEach(el => {
+        el.style.background = `linear-gradient(135deg, ${primaryActionColor} 0%, ${secondaryActionColor} 100%)`;
+      });
+
+      const links = document.querySelectorAll('nav a, .contact-text a');
+      links.forEach(link => link.style.color = secondaryActionColor);
+
+      const baseFontStack = 'Georgia, Times New Roman, serif';
+      document.body.style.fontFamily = `${fontFamily}, ${baseFontStack}`;
+      document.body.style.fontSize = `${fontSize}px`;
+
+      document.querySelector('.logo').style.fontSize = `${fontSize * 1.75}px`;
+      document.querySelectorAll('nav a').forEach(el => el.style.fontSize = `${fontSize}px`);
+      document.querySelector('.hero h1').style.fontSize = `${fontSize * 3}px`;
+      document.querySelector('.hero p').style.fontSize = `${fontSize * 1.25}px`;
+      document.querySelectorAll('.content-area h2').forEach(el => el.style.fontSize = `${fontSize * 1.75}px`);
+      document.querySelectorAll('.content-area p').forEach(el => el.style.fontSize = `${fontSize}px`);
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.config.primary_action_color = value;
+                window.elementSdk.setConfig({ primary_action_color: value });
+              }
+            }
+          },
+          {
+            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              if (window.elementSdk) {
+                window.elementSdk.config.secondary_action_color = value;
+                window.elementSdk.setConfig({ secondary_action_color: value });
+              }
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            if (window.elementSdk) {
+              window.elementSdk.config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            if (window.elementSdk) {
+              window.elementSdk.config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["instructor_name", config.instructor_name || defaultConfig.instructor_name],
+        ["instructor_photo", config.instructor_photo || defaultConfig.instructor_photo],
+        ["instructor_bio", config.instructor_bio || defaultConfig.instructor_bio],
+        ["site_title", config.site_title || defaultConfig.site_title],
+        ["hero_heading", config.hero_heading || defaultConfig.hero_heading],
+        ["hero_description", config.hero_description || defaultConfig.hero_description]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    // Global state
+    let isAdmin = false;
+    let contentItems = [];
+    let editingItem = null;
+    const ADMIN_PASSWORD = "admin123";
+
+    // Data SDK Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        contentItems = data;
+        renderGallery();
+      }
+    };
+
+    // Initialize Data SDK
+    async function initDataSdk() {
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          showToast("Failed to initialize data storage", true);
+        }
+      }
+    }
+
+    initDataSdk();
+
+    // Render Gallery
+    function renderGallery() {
+      const gallery = document.getElementById('content-gallery');
+      
+      if (contentItems.length === 0) {
+        gallery.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <p>No content available yet. Admin can upload books and videos!</p>
+          </div>
+        `;
+        return;
+      }
+
+      gallery.innerHTML = contentItems.map(item => {
+        const typeEmoji = item.type === 'book' ? '📚' : '🎥';
+        const typeLabel = item.type === 'book' ? 'Book' : 'Video';
+        
+        return `
+          <div class="content-card" data-id="${item.__backendId}">
+            <div class="content-image">
+              ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}">` : typeEmoji}
+              <span class="content-type-badge">${typeLabel}</span>
+            </div>
+            <div class="content-info">
+              <h3>${item.title}</h3>
+              <p>${item.description}</p>
+              <div class="content-price">${item.price}</div>
+              <div class="content-actions">
+                <button class="buy-btn" onclick="showPurchaseModal()">Buy Now</button>
+              </div>
+              <div class="admin-actions ${isAdmin ? 'active' : ''}">
+                <button class="edit-btn" onclick="editContent('${item.__backendId}')">Edit</button>
+                <button class="delete-btn" onclick="deleteContent('${item.__backendId}')">Delete</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Show Toast
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${isError ? 'error' : ''} active`;
+      setTimeout(() => {
+        toast.classList.remove('active');
+      }, 3000);
+    }
+
+    // Admin Login
+    document.getElementById('admin-login-btn').addEventListener('click', () => {
+      document.getElementById('login-modal').classList.add('active');
+    });
+
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const password = document.getElementById('admin-password').value;
+      
+      if (password === ADMIN_PASSWORD) {
+        isAdmin = true;
+        document.getElementById('admin-panel').classList.add('active');
+        document.getElementById('admin-login-btn').style.display = 'none';
+        document.getElementById('logout-btn').style.display = 'block';
+        document.getElementById('login-modal').classList.remove('active');
+        document.getElementById('admin-password').value = '';
+        showToast('Logged in successfully!');
+        renderGallery();
+      } else {
+        showToast('Invalid password!', true);
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      isAdmin = false;
+      document.getElementById('admin-panel').classList.remove('active');
+      document.getElementById('admin-login-btn').style.display = 'block';
+      document.getElementById('logout-btn').style.display = 'none';
+      showToast('Logged out successfully!');
+      renderGallery();
+    });
+
+    // Update Instructor Photo
+    document.getElementById('photo-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const photoUrl = document.getElementById('instructor-photo-url').value;
+      const photoBtn = document.getElementById('photo-btn');
+      
+      photoBtn.disabled = true;
+      photoBtn.textContent = 'Updating...';
+
+      if (window.elementSdk) {
+        await window.elementSdk.setConfig({ instructor_photo: photoUrl });
+        showToast('Photo updated successfully!');
+        document.getElementById('instructor-photo-url').value = '';
+      } else {
+        showToast('Failed to update photo', true);
+      }
+
+      photoBtn.disabled = false;
+      photoBtn.textContent = 'Update Photo';
+    });
+
+    // Upload Content
+    document.getElementById('upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!window.dataSdk) {
+        showToast('Data storage not available', true);
+        return;
+      }
+
+      if (contentItems.length >= 999) {
+        showToast('Maximum limit of 999 items reached!', true);
+        return;
+      }
+
+      const uploadBtn = document.getElementById('upload-btn');
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = 'Uploading...';
+
+      const newContent = {
+        title: document.getElementById('content-title').value,
+        description: document.getElementById('content-description').value,
+        price: document.getElementById('content-price').value,
+        type: document.getElementById('content-type').value,
+        imageUrl: document.getElementById('content-image').value || '',
+        createdAt: new Date().toISOString()
+      };
+
+      if (editingItem) {
+        const itemToUpdate = contentItems.find(item => item.__backendId === editingItem);
+        if (itemToUpdate) {
+          Object.assign(itemToUpdate, newContent);
+          const result = await window.dataSdk.update(itemToUpdate);
+          
+          if (result.isOk) {
+            showToast('Content updated successfully!');
+            editingItem = null;
+            document.getElementById('upload-form').reset();
+          } else {
+            showToast('Failed to update content', true);
+          }
+        }
+      } else {
+        const result = await window.dataSdk.create(newContent);
+        
+        if (result.isOk) {
+          showToast('Content uploaded successfully!');
+          document.getElementById('upload-form').reset();
+        } else {
+          showToast('Failed to upload content', true);
+        }
+      }
+
+      uploadBtn.disabled = false;
+      uploadBtn.textContent = 'Upload Content';
+    });
+
+    // Edit Content
+    window.editContent = function(id) {
+      const item = contentItems.find(item => item.__backendId === id);
+      if (item) {
+        editingItem = id;
+        document.getElementById('content-title').value = item.title;
+        document.getElementById('content-description').value = item.description;
+        document.getElementById('content-price').value = item.price;
+        document.getElementById('content-type').value = item.type;
+        document.getElementById('content-image').value = item.imageUrl || '';
+        document.getElementById('upload-btn').textContent = 'Update Content';
+        document.getElementById('admin-panel').scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    // Delete Content
+    window.deleteContent = async function(id) {
+      if (!window.dataSdk) return;
+
+      const item = contentItems.find(item => item.__backendId === id);
+      if (!item) return;
+
+      const card = document.querySelector(`[data-id="${id}"]`);
+      if (card) {
+        const deleteBtn = card.querySelector('.delete-btn');
+        const originalText = deleteBtn.textContent;
+        deleteBtn.textContent = 'Deleting...';
+        deleteBtn.disabled = true;
+
+        const result = await window.dataSdk.delete(item);
+        
+        if (result.isOk) {
+          showToast('Content deleted successfully!');
+        } else {
+          showToast('Failed to delete content', true);
+          deleteBtn.textContent = originalText;
+          deleteBtn.disabled = false;
+        }
+      }
+    };
+
+    // Purchase Modal
+    window.showPurchaseModal = function() {
+      document.getElementById('purchase-modal').classList.add('active');
+    };
+
+    document.getElementById('close-purchase').addEventListener('click', () => {
+      document.getElementById('purchase-modal').classList.remove('active');
+    });
+
+    document.getElementById('close-login').addEventListener('click', () => {
+      document.getElementById('login-modal').classList.remove('active');
+    });
+
+    // Language Translator
+    const translations = {
+      en: { about: "About", gallery: "Gallery", contact: "Contact", aboutInstructor: "About the Instructor", contentGallery: "Content Gallery", getInTouch: "Get in Touch", instructor: "Instructor" },
+      es: { about: "Acerca de", gallery: "Galería", contact: "Contacto", aboutInstructor: "Sobre el Instructor", contentGallery: "Galería de Contenido", getInTouch: "Contacta", instructor: "Instructor" },
+      fr: { about: "À propos", gallery: "Galerie", contact: "Contact", aboutInstructor: "À propos de l'instructeur", contentGallery: "Galerie de contenu", getInTouch: "Contactez-nous", instructor: "Instructeur" },
+      de: { about: "Über", gallery: "Galerie", contact: "Kontakt", aboutInstructor: "Über den Ausbilder", contentGallery: "Inhaltsgalerie", getInTouch: "Kontaktieren Sie uns", instructor: "Ausbilder" },
+      hi: { about: "के बारे में", gallery: "गैलरी", contact: "संपर्क", aboutInstructor: "प्रशिक्षक के बारे में", contentGallery: "सामग्री गैलरी", getInTouch: "संपर्क करें", instructor: "प्रशिक्षक" },
+      zh: { about: "关于", gallery: "画廊", contact: "联系", aboutInstructor: "关于讲师", contentGallery: "内容画廊", getInTouch: "联系我们", instructor: "讲师" },
+      ar: { about: "حول", gallery: "معرض", contact: "اتصل", aboutInstructor: "عن المدرب", contentGallery: "معرض المحتوى", getInTouch: "تواصل معنا", instructor: "المدرب" },
+      ja: { about: "について", gallery: "ギャラリー", contact: "お問い合わせ", aboutInstructor: "講師について", contentGallery: "コンテンツギャラリー", getInTouch: "お問い合わせください", instructor: "講師" },
+      pt: { about: "Sobre", gallery: "Galeria", contact: "Contato", aboutInstructor: "Sobre o Instrutor", contentGallery: "Galeria de Conteúdo", getInTouch: "Entre em contato", instructor: "Instrutor" },
+      ru: { about: "О нас", gallery: "Галерея", contact: "Контакт", aboutInstructor: "Об инструкторе", contentGallery: "Галерея контента", getInTouch: "Свяжитесь с нами", instructor: "Инструктор" }
+    };
+
+    const languageBtn = document.getElementById('language-btn');
+    const languageDropdown = document.getElementById('language-dropdown');
+    const languageOptions = document.querySelectorAll('.language-option');
+
+    languageBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      languageDropdown.classList.toggle('active');
+    });
+
+    document.addEventListener('click', () => {
+      languageDropdown.classList.remove('active');
+    });
+
+    languageOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const lang = option.getAttribute('data-lang');
+        const langName = option.querySelector('.language-name').textContent;
+        const langFlag = option.querySelector('.language-flag').textContent;
+
+        document.getElementById('current-language').textContent = langName;
+        document.getElementById('current-flag').textContent = langFlag;
+
+        languageOptions.forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+
+        translatePage(lang);
+      });
+    });
+
+    function translatePage(lang) {
+      const t = translations[lang];
+      const navLinks = document.querySelectorAll('nav a');
+      navLinks[0].textContent = t.about;
+      navLinks[1].textContent = t.gallery;
+      navLinks[2].textContent = t.contact;
+
+      const headings = document.querySelectorAll('.content-area h2');
+      headings[0].textContent = t.aboutInstructor;
+      headings[1].textContent = t.contentGallery;
+      headings[2].textContent = t.getInTouch;
+
+      document.getElementById('instructor-name-display').textContent = t.instructor;
+    }
+
+    // Close modals on outside click
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a394634b53733ba',t:'MTc2Mzk5MTE2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
