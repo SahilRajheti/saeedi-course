@@ -1,706 +1,1383 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Saeedi Course Marketplace — Admin Controlled</title>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Marketplace Pro - Advanced Admin Control</title>
   <meta name="robots" content="noindex">
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
   <style>
-    :root{
-      --primary:#4f46e5;
-      --accent:#06b6d4;
-      --muted:#6b7280;
-      --card:#ffffff;
-      --bg:#f6f6f8;
-      --success:#16a34a;
-      --danger:#dc2626;
-      --glass: rgba(255,255,255,0.85);
+    body {
+      box-sizing: border-box;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;
-      color:#111827;background:var(--bg);-webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+    
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --accent: #06b6d4;
+      --muted: #6b7280;
+      --card: #ffffff;
+      --bg: #f8fafc;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --warning: #f59e0b;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
     }
-    header{
-      position:sticky;top:0;z-index:20;
-      background:white;border-bottom:1px solid #e6e9ee;padding:12px 18px;
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      box-shadow:0 2px 8px rgba(16,24,40,0.02);
+    
+    * {
+      box-sizing: border-box;
     }
-    .logo{font-weight:800;color:var(--primary);text-decoration:none;font-size:18px}
-    .top-actions{display:flex;gap:8px;align-items:center}
-    .btn{background:var(--primary);color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:600}
-    .btn.ghost{background:transparent;color:var(--primary);border:1px solid var(--primary)}
-    .btn.warn{background:var(--danger)}
-    main{max-width:1200px;margin:26px auto;padding:0 18px}
-    .toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
-    .search{flex:1;max-width:520px;display:flex;gap:8px}
-    input[type="text"],input[type="search"],input[type="url"],input[type="number"],textarea,select{
-      padding:10px;border:1px solid #e6e9ee;border-radius:8px;font-size:14px;width:100%;
+    
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
     }
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
-    .card{background:var(--card);border-radius:12px;padding:16px;border:1px solid #eef2f6;box-shadow:0 6px 18px rgba(16,24,40,0.03)}
-    .course-image{height:150px;border-radius:8px;background:linear-gradient(135deg,#6e52ff,#ff6e8a);display:flex;align-items:center;justify-content:center;color:white;font-size:28px}
-    .course-title{font-weight:700;font-size:18px;margin:12px 0 6px}
-    .course-desc{color:var(--muted);font-size:14px;margin-bottom:12px}
-    .price{font-weight:800;color:#059669;font-size:18px}
-    footer{text-align:center;color:var(--muted);padding:20px;font-size:13px;margin-top:28px}
-
-    /* modal */
-    .modal-back{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:none;align-items:center;justify-content:center;z-index:400;padding:12px}
-    .modal-back.active{display:flex}
-    .modal{width:100%;max-width:940px;background:var(--glass);backdrop-filter:blur(6px);border-radius:12px;padding:18px;border:1px solid rgba(0,0,0,0.06)}
-    .row{display:flex;gap:12px;align-items:center}
-    .col{flex:1}
-    label{display:block;font-weight:700;margin-bottom:6px;font-size:13px}
-    .small{font-size:13px;color:var(--muted)}
-    .muted{color:var(--muted)}
-    .qr{width:220px;height:220px;border-radius:8px;border:1px solid #eee;display:flex;align-items:center;justify-content:center;background:white}
-    .controls{display:flex;gap:8px;flex-wrap:wrap}
-    .pill{padding:6px 10px;border-radius:999px;background:#f1f5f9;color:#111;font-weight:600}
-    .meta{font-size:12px;color:var(--muted)}
-    .hidden{display:none}
-    .center{text-align:center}
-    .tag{display:inline-block;padding:6px 8px;border-radius:6px;background:#eef2ff;color:var(--primary);font-weight:700;margin-right:6px}
-    .file-link{word-break:break-word;color:var(--primary);text-decoration:underline}
-    .flex-col{display:flex;flex-direction:column;gap:8px}
-    @media (max-width:720px){ .row{flex-direction:column}.qr{width:180px;height:180px} }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #0f172a;
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .hero-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 48px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="1" fill="white" opacity="0.1"/></svg>');
+      opacity: 0.3;
+    }
+    
+    .hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero-title {
+      font-size: 42px;
+      font-weight: 800;
+      margin: 0 0 8px 0;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .hero-tagline {
+      font-size: 18px;
+      opacity: 0.95;
+      margin: 0;
+      font-weight: 400;
+    }
+    
+    .top-bar {
+      background: white;
+      border-bottom: 2px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    
+    .btn {
+      background: var(--primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .btn:hover {
+      background: var(--primary-hover);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+    }
+    
+    .btn-danger:hover {
+      background: var(--danger-hover);
+    }
+    
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+    }
+    
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+    
+    .btn-success {
+      background: var(--success);
+    }
+    
+    .btn-warning {
+      background: var(--warning);
+    }
+    
+    main {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    
+    .about-card {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .about-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .about-flex {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    
+    .avatar-large {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 40px;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    }
+    
+    .about-info h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 0 0 4px 0;
+      color: #0f172a;
+    }
+    
+    .about-info .role {
+      font-size: 18px;
+      color: var(--primary);
+      font-weight: 600;
+      margin: 0 0 12px 0;
+    }
+    
+    .about-info p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+    }
+    
+    .stat-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .control-panel {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+    
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 20px 0;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    
+    .search-box {
+      flex: 1;
+      max-width: 400px;
+      min-width: 250px;
+      position: relative;
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+    
+    input[type="text"],
+    input[type="search"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    
+    input[type="search"] {
+      padding-left: 40px;
+    }
+    
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    }
+    
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: var(--success);
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 28px;
+    }
+    
+    .course-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s;
+      position: relative;
+    }
+    
+    .course-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .course-thumbnail {
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 56px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      position: relative;
+    }
+    
+    .course-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 12px;
+      backdrop-filter: blur(8px);
+    }
+    
+    .unpublished-badge {
+      background: rgba(220, 38, 38, 0.95);
+      color: white;
+    }
+    
+    .course-content {
+      padding: 20px;
+    }
+    
+    .course-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .course-category {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #eef2ff;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    
+    .course-title {
+      font-weight: 700;
+      font-size: 20px;
+      margin: 0 0 10px 0;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+    
+    .course-description {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 16px;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .course-instructor {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .rating-display {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    
+    .stars {
+      color: #fbbf24;
+      font-size: 16px;
+    }
+    
+    .rating-number {
+      font-weight: 700;
+      color: #0f172a;
+    }
+    
+    .course-features {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    
+    .feature-tag {
+      background: #f8fafc;
+      padding: 6px 10px;
+      border-radius: 6px;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .price-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .price {
+      font-weight: 800;
+      color: var(--success);
+      font-size: 28px;
+    }
+    
+    .course-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      overflow-y: auto;
+      backdrop-filter: blur(4px);
+    }
+    
+    .modal-backdrop.active {
+      display: flex;
+    }
+    
+    .modal {
+      width: 100%;
+      max-width: 700px;
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: var(--shadow-lg);
+      max-height: 90%;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+    
+    .modal-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #334155;
+    }
+    
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 2px solid var(--border);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 100px 20px;
+      color: var(--muted);
+    }
+    
+    .empty-icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+      opacity: 0.3;
+    }
+    
+    .empty-state h3 {
+      font-size: 24px;
+      color: #334155;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    
+    .empty-state p {
+      font-size: 16px;
+      margin-bottom: 28px;
+    }
+    
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 24px;
+      font-size: 14px;
+      background: white;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: white;
+      color: #0f172a;
+      padding: 16px 24px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      z-index: 2000;
+      animation: slideUp 0.3s;
+      border-left: 4px solid var(--success);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 400px;
+    }
+    
+    .toast.error {
+      border-left-color: var(--danger);
+    }
+    
+    @keyframes slideUp {
+      from {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 32px;
+      }
+      
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .search-box {
+        max-width: 100%;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .about-flex {
+        text-align: center;
+        flex-direction: column;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
-</head>
-<body>
-
-<header>
-  <a class="logo" href="#" onclick="showView('home')">Saeedi Courses (Admin)</a>
-  <div class="top-actions">
-    <span class="pill" id="status-pill">Offline</span>
-    <button class="btn ghost" id="btn-upload">Manage</button>
-    <button class="btn" id="btn-login">Admin</button>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="hero-header">
+   <div class="hero-content">
+    <h1 class="hero-title" id="heroTitle">Course Marketplace</h1>
+    <p class="hero-tagline" id="heroTagline">Learn from the best instructors worldwide</p>
+   </div>
   </div>
-</header>
-
-<main>
-  <div class="toolbar">
-    <div class="search">
-      <input type="search" id="search-input" placeholder="Search courses (title / description)" oninput="renderCourses()" />
-      <select id="filter-select" onchange="renderCourses()">
-        <option value="all">All</option>
-        <option value="published">Published</option>
-        <option value="unpublished">Unpublished</option>
-      </select>
-    </div>
-
-    <div class="controls">
-      <button class="btn ghost" onclick="importData()">Import</button>
-      <button class="btn ghost" onclick="exportData()">Export</button>
-      <button class="btn" onclick="resetAllConfirm()">Reset All</button>
-    </div>
+  <div class="top-bar">
+   <div class="admin-badge"><span>🔧</span> <span>Admin Control Panel</span>
+   </div><button class="btn" id="createCourseBtn"> <span>➕</span> <span id="headerBtnText">Create New Course</span> </button>
   </div>
-
-  <section id="home-view">
-    <div id="courses-grid" class="grid"></div>
-  </section>
-
-  <section id="thankyou-view" class="hidden">
-    <div class="card center">
-      <h2>Thank you 🎉</h2>
-      <p id="ty-text" class="muted"></p>
-      <div style="margin-top:12px"><button class="btn" id="ty-open">Open Course</button></div>
-      <div style="margin-top:12px"><button class="btn ghost" onclick="showView('home')">Back to Courses</button></div>
+  <main>
+   <div class="about-card">
+    <div class="about-flex">
+     <div class="avatar-large" id="avatarLarge">
+      SR
+     </div>
+     <div class="about-info">
+      <h1 id="profileName">Sahil Rajheti</h1>
+      <p class="role" id="profileRole">Software Developer</p>
+      <p id="profileBio">Welcome to my course marketplace! I'm passionate about creating quality educational content and helping others learn new skills through comprehensive courses.</p>
+     </div>
     </div>
-  </section>
-
-  <section id="access-view" class="hidden">
-    <div class="card">
-      <div class="row">
-        <div style="flex:1">
-          <h2 id="access-title">Course title</h2>
-          <div class="small muted" id="access-desc">desc</div>
-        </div>
-      </div>
-
-      <hr>
-
-      <div id="access-content" class="flex-col"></div>
-
-      <div style="margin-top:12px" class="row">
-        <button class="btn ghost" onclick="showView('home')">Back</button>
-        <button class="btn" onclick="downloadAll()">Download / Open</button>
-      </div>
+   </div>
+   <div class="stats-grid" id="statsGrid">
+    <div class="stat-card">
+     <div class="stat-value" id="totalCourses">
+      0
+     </div>
+     <div class="stat-label">
+      Total Courses
+     </div>
     </div>
-  </section>
-
-</main>
-
-<!-- ADMIN LOGIN & MANAGE MODAL -->
-<div class="modal-back" id="modal-admin">
-  <div class="modal">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h3 id="admin-modal-title">Admin Panel</h3>
-      <div>
-        <button class="btn ghost" onclick="closeAdmin()">Close</button>
-      </div>
+    <div class="stat-card">
+     <div class="stat-value" id="publishedCourses">
+      0
+     </div>
+     <div class="stat-label">
+      Published
+     </div>
     </div>
-
-    <div class="row" style="margin-top:12px">
-      <div class="col">
-        <!-- Admin Login -->
-        <div id="admin-login-box" class="">
-          <label>Admin Password</label>
-          <input type="password" id="admin-password-input" placeholder="Enter admin password" />
-          <div style="margin-top:8px" class="controls">
-            <button class="btn" onclick="adminLogin()">Login</button>
-            <button class="btn ghost" onclick="seedSample()">Seed Sample</button>
-          </div>
-          <div id="admin-login-error" class="muted" style="margin-top:8px"></div>
-        </div>
-
-        <!-- Admin Controls (visible when logged in) -->
-        <div id="admin-controls" class="hidden">
-          <div style="margin-top:8px" class="small muted">Logged in as admin. Use this panel to manage courses, purchases and config.</div>
-
-          <hr>
-
-          <h4 style="margin:6px 0">Platform Settings</h4>
-          <label>Admin Password (change)</label>
-          <input type="text" id="admin-password-change" placeholder="New admin password" />
-          <label style="margin-top:8px">UPI ID</label>
-          <input type="text" id="admin-upi-input" placeholder="7078297357-3@ybl" />
-          <div style="margin-top:8px" class="controls">
-            <button class="btn" onclick="saveSettings()">Save Settings</button>
-            <button class="btn ghost" onclick="loadSettings()">Reset</button>
-          </div>
-
-          <hr>
-
-          <h4 style="margin:6px 0">Upload / Edit Course</h4>
-          <label>Title</label><input type="text" id="course-title" placeholder="Course title">
-          <label style="margin-top:8px">Description</label><textarea id="course-desc" placeholder="Short description"></textarea>
-          <div class="row" style="margin-top:8px">
-            <div style="flex:1"><label>Price (₹)</label><input type="number" id="course-price" value="499"></div>
-            <div style="flex:1"><label>Access file/video URL</label><input type="url" id="course-file" placeholder="https://..."></div>
-          </div>
-          <label style="margin-top:8px">Cover image URL (optional)</label><input type="url" id="course-image" placeholder="https://...">
-          <div style="margin-top:8px" class="controls">
-            <button class="btn" onclick="saveCourse()">Save Course</button>
-            <button class="btn ghost" onclick="resetForm()">Reset Form</button>
-          </div>
-
-          <hr>
-          <h4 style="margin:6px 0">Existing Courses</h4>
-          <div id="admin-course-list" style="max-height:220px;overflow:auto"></div>
-
-          <hr>
-          <h4 style="margin:6px 0">Purchases</h4>
-          <div id="admin-purchase-list" style="max-height:220px;overflow:auto"></div>
-
-          <hr>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-            <button class="btn" onclick="exportData()">Export JSON</button>
-            <button class="btn ghost" onclick="document.getElementById('import-file').click()">Import JSON</button>
-            <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
-            <button class="btn warn" onclick="resetAllConfirm()">Reset All</button>
-          </div>
-        </div>
-      </div>
-
-      <div style="width:320px">
-        <div class="center">
-          <div class="small muted">Payment QR (will update to use configured UPI)</div>
-          <!-- Use the uploaded image in the environment -->
-          <div class="qr" style="margin-top:8px">
-            <img id="admin-qr" src="/mnt/data/upi_qr.png" alt="QR" style="width:100%;height:100%;object-fit:cover">
-          </div>
-          <div class="small muted" style="margin-top:8px">Deep link (desktop opens if app available)</div>
-          <div style="margin-top:8px"><input type="text" id="admin-upi-deeplink" readonly style="width:100%;padding:8px;border-radius:8px;border:1px solid #eee"></div>
-          <div style="margin-top:8px" class="small muted">You can download or share this QR.</div>
-        </div>
-      </div>
+    <div class="stat-card">
+     <div class="stat-value" id="totalStudents">
+      0
+     </div>
+     <div class="stat-label">
+      Total Students
+     </div>
     </div>
-
+    <div class="stat-card">
+     <div class="stat-value" id="avgRating">
+      0.0
+     </div>
+     <div class="stat-label">
+      Avg Rating
+     </div>
+    </div>
+   </div>
+   <div class="control-panel">
+    <h3 class="panel-title">🎯 Search &amp; Filter Controls</h3>
+    <div class="toolbar">
+     <div class="search-box"><span class="search-icon">🔍</span> <input type="search" id="searchInput" placeholder="Search courses...">
+     </div>
+     <div class="filters"><select id="categoryFilter"> <option value="">All Categories</option> <option value="Development">Development</option> <option value="Design">Design</option> <option value="Business">Business</option> <option value="Marketing">Marketing</option> <option value="Data Science">Data Science</option> <option value="Photography">Photography</option> <option value="Music">Music</option> <option value="Other">Other</option> </select> <select id="levelFilter"> <option value="">All Levels</option> <option value="Beginner">Beginner</option> <option value="Intermediate">Intermediate</option> <option value="Advanced">Advanced</option> <option value="Expert">Expert</option> </select>
+      <div class="filter-group"><label style="margin: 0; font-size: 13px; color: var(--muted);">Show Unpublished</label> <label class="toggle-switch"> <input type="checkbox" id="showUnpublished"> <span class="toggle-slider"></span> </label>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div id="coursesGrid" class="grid"></div>
+   <div id="emptyState" class="empty-state hidden">
+    <div class="empty-icon">
+     📚
+    </div>
+    <h3>No courses yet</h3>
+    <p>Start building your course library by creating your first course</p><button class="btn" onclick="openCreateModal()">Create Your First Course</button>
+   </div>
+  </main>
+  <footer>
+   <p id="footerText">© 2024 Course Marketplace. All rights reserved.</p>
+  </footer>
+  <div class="modal-backdrop" id="courseModal">
+   <div class="modal">
+    <div class="modal-header">
+     <h2 class="modal-title" id="modalTitle">Create New Course</h2>
+    </div>
+    <form id="courseForm">
+     <div class="form-row">
+      <div class="form-group full-width"><label for="courseTitle">Course Title *</label> <input type="text" id="courseTitle" required placeholder="Complete Web Development Bootcamp">
+      </div>
+     </div>
+     <div class="form-group"><label for="courseDescription">Description *</label> <textarea id="courseDescription" required placeholder="Detailed description of what students will learn..."></textarea>
+     </div>
+     <div class="form-row">
+      <div class="form-group"><label for="courseInstructor">Instructor Name *</label> <input type="text" id="courseInstructor" required placeholder="John Smith">
+      </div>
+      <div class="form-group"><label for="courseCategory">Category *</label> <select id="courseCategory" required> <option value="">Select category</option> <option value="Development">Development</option> <option value="Design">Design</option> <option value="Business">Business</option> <option value="Marketing">Marketing</option> <option value="Data Science">Data Science</option> <option value="Photography">Photography</option> <option value="Music">Music</option> <option value="Other">Other</option> </select>
+      </div>
+     </div>
+     <div class="form-row">
+      <div class="form-group"><label for="courseLevel">Difficulty Level *</label> <select id="courseLevel" required> <option value="">Select level</option> <option value="Beginner">Beginner</option> <option value="Intermediate">Intermediate</option> <option value="Advanced">Advanced</option> <option value="Expert">Expert</option> </select>
+      </div>
+      <div class="form-group"><label for="coursePrice">Price (USD) *</label> <input type="number" id="coursePrice" required min="0" step="0.01" placeholder="49.99">
+      </div>
+     </div>
+     <div class="form-row">
+      <div class="form-group"><label for="courseDuration">Duration *</label> <input type="text" id="courseDuration" required placeholder="8 hours">
+      </div>
+      <div class="form-group"><label for="courseLessons">Number of Lessons *</label> <input type="number" id="courseLessons" required min="1" placeholder="24">
+      </div>
+     </div>
+     <div class="form-row">
+      <div class="form-group"><label for="courseStudents">Enrolled Students</label> <input type="number" id="courseStudents" min="0" placeholder="1250" value="0">
+      </div>
+      <div class="form-group"><label for="courseRating">Rating (0-5)</label> <input type="number" id="courseRating" min="0" max="5" step="0.1" placeholder="4.8" value="0">
+      </div>
+     </div>
+     <div class="form-row">
+      <div class="form-group"><label for="thumbnailIcon">Thumbnail Icon (emoji)</label> <input type="text" id="thumbnailIcon" placeholder="💻" maxlength="2">
+      </div>
+      <div class="form-group"><label for="courseFeatures">Key Features (comma-separated)</label> <input type="text" id="courseFeatures" placeholder="Certificate, Lifetime Access">
+      </div>
+     </div>
+     <div class="form-group"><label style="display: flex; align-items: center; gap: 12px; cursor: pointer;"> <input type="checkbox" id="coursePublished" checked style="width: auto;"> <span>Publish course immediately</span> </label>
+     </div>
+     <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button> <button type="submit" class="btn" id="submitBtn"> <span id="submitText">Create Course</span> </button>
+     </div>
+    </form>
+   </div>
   </div>
-</div>
+  <script>
+    const defaultConfig = {
+      site_title: "Course Marketplace",
+      site_tagline: "Learn from the best instructors worldwide",
+      header_button_text: "Create New Course",
+      about_name: "Sahil Rajheti",
+      about_title: "Software Developer",
+      about_description: "Welcome to my course marketplace! I'm passionate about creating quality educational content and helping others learn new skills through comprehensive courses.",
+      search_placeholder: "Search courses...",
+      footer_text: "© 2024 Course Marketplace. All rights reserved.",
+      primary_color: "#4f46e5",
+      background_color: "#f8fafc",
+      card_color: "#ffffff",
+      success_color: "#16a34a",
+      text_color: "#0f172a"
+    };
 
-<footer>© 2025 Saeedi Courses — Manage from this single page</footer>
+    let courses = [];
+    let editingCourse = null;
+    let currentFilter = { search: '', category: '', level: '', showUnpublished: false };
 
-<script>
-/* ---------- Persistence Keys & Defaults ---------- */
-const KEY_COURSES = 'saeedi_courses_v2';
-const KEY_PURCHASES = 'saeedi_purchases_v2';
-const KEY_SETTINGS = 'saeedi_settings_v2';
-const KEY_ADMIN_SESSION = 'saeedi_admin_session_v2';
+    const thumbnailGradients = [
+      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+      'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
+      'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+      'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'
+    ];
 
-const DEFAULT_SETTINGS = {
-  upi: '7078297357-3@ybl',
-  adminPassword: 'saeedi@7078'
-};
+    const dataHandler = {
+      onDataChanged(data) {
+        courses = data;
+        renderCourses();
+        updateStats();
+      }
+    };
 
-/* ---------- App State ---------- */
-let courses = load(KEY_COURSES) || [];
-let purchases = load(KEY_PURCHASES) || [];
-let settings = load(KEY_SETTINGS) || DEFAULT_SETTINGS;
-let adminSession = sessionStorage.getItem(KEY_ADMIN_SESSION) === 'true';
+    async function onConfigChange(config) {
+      const elements = {
+        heroTitle: document.getElementById('heroTitle'),
+        heroTagline: document.getElementById('heroTagline'),
+        headerBtnText: document.getElementById('headerBtnText'),
+        profileName: document.getElementById('profileName'),
+        profileRole: document.getElementById('profileRole'),
+        profileBio: document.getElementById('profileBio'),
+        avatarLarge: document.getElementById('avatarLarge'),
+        searchInput: document.getElementById('searchInput'),
+        footerText: document.getElementById('footerText')
+      };
 
-/* ---------- Init ---------- */
-document.getElementById('btn-login').addEventListener('click', openAdmin);
-document.getElementById('btn-upload').addEventListener('click', openAdmin);
-document.getElementById('ty-open').addEventListener('click', ()=> {});
-document.getElementById('admin-qr').src = '/mnt/data/upi_qr.png';
-document.getElementById('admin-password-change').value = settings.adminPassword || '';
-document.getElementById('admin-upi-input').value = settings.upi || DEFAULT_SETTINGS.upi;
+      if (elements.heroTitle) {
+        elements.heroTitle.textContent = config.site_title || defaultConfig.site_title;
+      }
+      if (elements.heroTagline) {
+        elements.heroTagline.textContent = config.site_tagline || defaultConfig.site_tagline;
+      }
+      if (elements.headerBtnText) {
+        elements.headerBtnText.textContent = config.header_button_text || defaultConfig.header_button_text;
+      }
+      if (elements.profileName) {
+        const name = config.about_name || defaultConfig.about_name;
+        elements.profileName.textContent = name;
+        
+        if (elements.avatarLarge) {
+          const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+          elements.avatarLarge.textContent = initials;
+        }
+      }
+      if (elements.profileRole) {
+        elements.profileRole.textContent = config.about_title || defaultConfig.about_title;
+      }
+      if (elements.profileBio) {
+        elements.profileBio.textContent = config.about_description || defaultConfig.about_description;
+      }
+      if (elements.searchInput) {
+        elements.searchInput.placeholder = config.search_placeholder || defaultConfig.search_placeholder;
+      }
+      if (elements.footerText) {
+        elements.footerText.textContent = config.footer_text || defaultConfig.footer_text;
+      }
 
-updateStatusPill();
-renderCourses();
-renderAdminCourseList();
-renderAdminPurchases();
+      document.documentElement.style.setProperty('--primary', config.primary_color || defaultConfig.primary_color);
+      document.documentElement.style.setProperty('--bg', config.background_color || defaultConfig.background_color);
+      document.documentElement.style.setProperty('--card', config.card_color || defaultConfig.card_color);
+      document.documentElement.style.setProperty('--success', config.success_color || defaultConfig.success_color);
+      document.body.style.color = config.text_color || defaultConfig.text_color;
+    }
 
-/* ---------- Helpers ---------- */
-function save(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
-function load(key){ try{ const v=localStorage.getItem(key); return v?JSON.parse(v):null; }catch(e){ return null; } }
-function uid(prefix='c'){ return prefix + '_' + Math.random().toString(36).slice(2,10); }
-function formatDate(ts){ return new Date(ts).toLocaleString(); }
-function showView(name){
-  document.querySelectorAll('main > section').forEach(s=> s.classList.add('hidden'));
-  const el = document.getElementById(name+'-view');
-  if(el) el.classList.remove('hidden');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function toast(msg, error=false){ alert(msg); } // simple for now
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.primary_color || defaultConfig.primary_color,
+              set: (value) => {
+                config.primary_color = value;
+                window.elementSdk.setConfig({ primary_color: value });
+              }
+            },
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.card_color || defaultConfig.card_color,
+              set: (value) => {
+                config.card_color = value;
+                window.elementSdk.setConfig({ card_color: value });
+              }
+            },
+            {
+              get: () => config.success_color || defaultConfig.success_color,
+              set: (value) => {
+                config.success_color = value;
+                window.elementSdk.setConfig({ success_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["site_title", config.site_title || defaultConfig.site_title],
+          ["site_tagline", config.site_tagline || defaultConfig.site_tagline],
+          ["header_button_text", config.header_button_text || defaultConfig.header_button_text],
+          ["about_name", config.about_name || defaultConfig.about_name],
+          ["about_title", config.about_title || defaultConfig.about_title],
+          ["about_description", config.about_description || defaultConfig.about_description],
+          ["search_placeholder", config.search_placeholder || defaultConfig.search_placeholder],
+          ["footer_text", config.footer_text || defaultConfig.footer_text]
+        ])
+      });
+    }
 
-/* ---------- Settings ---------- */
-function saveSettings(){
-  const newPass = document.getElementById('admin-password-change').value.trim();
-  const newUpi = document.getElementById('admin-upi-input').value.trim();
-  if(newUpi) settings.upi = newUpi;
-  if(newPass) settings.adminPassword = newPass;
-  save(KEY_SETTINGS, settings);
-  document.getElementById('admin-upi-deeplink').value = buildUpiLink('', settings.upi);
-  toast('Settings saved');
-  document.getElementById('admin-password-change').value = '';
-  updateStatusPill();
-  renderCourses();
-}
-function loadSettings(){
-  settings = load(KEY_SETTINGS) || DEFAULT_SETTINGS;
-  document.getElementById('admin-upi-input').value = settings.upi;
-  document.getElementById('admin-password-change').value = settings.adminPassword;
-  document.getElementById('admin-upi-deeplink').value = buildUpiLink('', settings.upi);
-  toast('Loaded saved settings');
-}
+    async function initializeApp() {
+      const initResult = await window.dataSdk.init(dataHandler);
+      if (!initResult.isOk) {
+        showToast("Failed to load courses. Please refresh the page.", 'error');
+        return;
+      }
 
-/* ---------- Admin Modal Controls ---------- */
-function openAdmin(){
-  document.getElementById('modal-admin').classList.add('active');
-  if(adminSession){
-    showAdminControls();
-  } else {
-    showLoginBox();
-  }
-}
-function closeAdmin(){ document.getElementById('modal-admin').classList.remove('active'); }
-function showLoginBox(){ document.getElementById('admin-login-box').classList.remove('hidden'); document.getElementById('admin-controls').classList.add('hidden'); document.getElementById('admin-modal-title').textContent='Admin Login'; }
-function showAdminControls(){ document.getElementById('admin-login-box').classList.add('hidden'); document.getElementById('admin-controls').classList.remove('hidden'); document.getElementById('admin-modal-title').textContent='Admin Panel'; document.getElementById('admin-password-input').value=''; document.getElementById('admin-upi-deeplink').value = buildUpiLink('', settings.upi); updateStatusPill(); }
+      document.getElementById('createCourseBtn').addEventListener('click', openCreateModal);
+      document.getElementById('courseForm').addEventListener('submit', handleSubmit);
+      document.getElementById('searchInput').addEventListener('input', handleSearch);
+      document.getElementById('categoryFilter').addEventListener('change', handleCategoryFilter);
+      document.getElementById('levelFilter').addEventListener('change', handleLevelFilter);
+      document.getElementById('showUnpublished').addEventListener('change', handleUnpublishedToggle);
 
-/* ---------- Admin Auth ---------- */
-function adminLogin(){
-  const v = document.getElementById('admin-password-input').value || '';
-  const saved = (settings.adminPassword || DEFAULT_SETTINGS.adminPassword);
-  if(v === saved){
-    adminSession = true;
-    sessionStorage.setItem(KEY_ADMIN_SESSION, 'true');
-    showAdminControls();
-    renderAdminCourseList();
-    renderAdminPurchases();
-    toast('Admin logged in');
-  } else {
-    document.getElementById('admin-login-error').textContent = 'Incorrect password';
-  }
-}
-function adminLogout(){
-  adminSession = false;
-  sessionStorage.removeItem(KEY_ADMIN_SESSION);
-  showLoginBox();
-  toast('Logged out');
-}
-function closeAdminAndSave(){ save(KEY_COURSES, courses); save(KEY_PURCHASES, purchases); save(KEY_SETTINGS, settings); closeAdmin(); }
+      if (window.elementSdk && window.elementSdk.config) {
+        await onConfigChange(window.elementSdk.config);
+      }
+    }
 
-/* ---------- Courses ---------- */
-function resetForm(){
-  editingCourseId = null;
-  document.getElementById('course-title').value = '';
-  document.getElementById('course-desc').value = '';
-  document.getElementById('course-price').value = 499;
-  document.getElementById('course-file').value = '';
-  document.getElementById('course-image').value = '';
-}
-let editingCourseId = null;
+    function updateStats() {
+      const published = courses.filter(c => c.published);
+      const totalStudents = courses.reduce((sum, c) => sum + (c.students || 0), 0);
+      const avgRating = courses.length > 0 
+        ? (courses.reduce((sum, c) => sum + (c.rating || 0), 0) / courses.length).toFixed(1)
+        : '0.0';
 
-function saveCourse(){
-  if(!adminSession){ return toast('Login first'); }
-  const title = document.getElementById('course-title').value.trim();
-  const desc = document.getElementById('course-desc').value.trim();
-  const price = Number(document.getElementById('course-price').value || 0);
-  const file = document.getElementById('course-file').value.trim();
-  const image = document.getElementById('course-image').value.trim();
-  if(!title || !desc) return toast('Title and description required');
+      document.getElementById('totalCourses').textContent = courses.length;
+      document.getElementById('publishedCourses').textContent = published.length;
+      document.getElementById('totalStudents').textContent = totalStudents.toLocaleString();
+      document.getElementById('avgRating').textContent = avgRating;
+    }
 
-  if(editingCourseId){
-    const c = courses.find(x=>x.id===editingCourseId);
-    if(!c) return;
-    Object.assign(c,{title,desc,price,file,image,updatedAt:Date.now()});
-    toast('Course updated');
-  } else {
-    const c = { id: uid('c'), title, desc, price, file, image, createdAt: Date.now(), published: true };
-    courses.unshift(c);
-    toast('Course created');
-  }
-  save(KEY_COURSES, courses);
-  renderCourses();
-  renderAdminCourseList();
-  resetForm();
-}
+    function renderCourses() {
+      const grid = document.getElementById('coursesGrid');
+      const emptyState = document.getElementById('emptyState');
+      
+      const filteredCourses = courses.filter(course => {
+        const matchesSearch = !currentFilter.search || 
+          course.title.toLowerCase().includes(currentFilter.search.toLowerCase()) ||
+          course.description.toLowerCase().includes(currentFilter.search.toLowerCase()) ||
+          course.instructor.toLowerCase().includes(currentFilter.search.toLowerCase());
+        
+        const matchesCategory = !currentFilter.category || course.category === currentFilter.category;
+        const matchesLevel = !currentFilter.level || course.level === currentFilter.level;
+        const matchesPublished = currentFilter.showUnpublished || course.published;
+        
+        return matchesSearch && matchesCategory && matchesLevel && matchesPublished;
+      });
 
-function editCourse(id){
-  const c = courses.find(x=>x.id===id);
-  if(!c) return;
-  editingCourseId = id;
-  document.getElementById('course-title').value = c.title;
-  document.getElementById('course-desc').value = c.desc;
-  document.getElementById('course-price').value = c.price;
-  document.getElementById('course-file').value = c.file;
-  document.getElementById('course-image').value = c.image;
-  document.getElementById('admin-modal').scrollTo({top:0,behavior:'smooth'});
-}
+      if (filteredCourses.length === 0) {
+        grid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        
+        if (courses.length === 0) {
+          emptyState.querySelector('h3').textContent = 'No courses yet';
+          emptyState.querySelector('p').textContent = 'Start building your course library by creating your first course';
+        } else {
+          emptyState.querySelector('h3').textContent = 'No courses found';
+          emptyState.querySelector('p').textContent = 'Try adjusting your filters or search criteria';
+        }
+        return;
+      }
 
-function togglePublish(id){
-  const c = courses.find(x=>x.id===id);
-  if(!c) return;
-  c.published = !c.published;
-  save(KEY_COURSES, courses);
-  renderCourses();
-  renderAdminCourseList();
-}
+      grid.classList.remove('hidden');
+      emptyState.classList.add('hidden');
 
-function deleteCourse(id){
-  if(!confirm('Delete this course?')) return;
-  courses = courses.filter(x=>x.id!==id);
-  save(KEY_COURSES, courses);
-  renderCourses();
-  renderAdminCourseList();
-}
+      grid.innerHTML = filteredCourses.map(course => {
+        const gradientIndex = Math.abs(hashCode(course.__backendId)) % thumbnailGradients.length;
+        const gradient = thumbnailGradients[gradientIndex];
+        const icon = course.thumbnail_icon || '📚';
+        const features = course.features ? course.features.split(',').map(f => f.trim()) : [];
+        const stars = '⭐'.repeat(Math.round(course.rating || 0));
 
-/* ---------- Render UI ---------- */
-function renderCourses(){
-  const grid = document.getElementById('courses-grid');
-  const q = (document.getElementById('search-input').value || '').toLowerCase();
-  const filter = document.getElementById('filter-select').value;
-  let list = courses.slice();
-
-  if(filter === 'published') list = list.filter(c=>c.published);
-  if(filter === 'unpublished') list = list.filter(c=>!c.published);
-  if(q) list = list.filter(c => (c.title + ' ' + c.desc).toLowerCase().includes(q));
-
-  if(list.length === 0){
-    grid.innerHTML = '<div class="card center"><div class="muted">No courses found</div></div>';
-    return;
-  }
-
-  grid.innerHTML = list.map(c => {
-    const thumb = c.image ? `<img src="${escape(c.image)}" style="width:100%;height:150px;object-fit:cover;border-radius:8px">` : `<div class="course-image">${escape(c.title[0]||'C')}</div>`;
-    const pubTag = c.published ? '<span class="tag">Published</span>' : '<span class="tag" style="background:#fff2f0;color:#991b1b">Draft</span>';
-    return `
-      <div class="card">
-        ${thumb}
-        <div class="course-title">${escape(c.title)} ${pubTag}</div>
-        <div class="course-desc">${escape(c.desc)}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
-          <div class="meta">₹${Number(c.price||0)}</div>
-          <div style="display:flex;gap:8px">
-            <button class="btn" onclick="openBuy('${c.id}')">Buy</button>
-            <button class="btn ghost" onclick="openAccessIfPurchased('${c.id}')">Access</button>
-            <button class="btn ghost" onclick="copyLink('${c.id}')">Share</button>
+        return `
+          <div class="course-card">
+            <div class="course-thumbnail" style="background: ${gradient}">
+              ${icon}
+              ${!course.published ? '<div class="course-badge unpublished-badge">DRAFT</div>' : ''}
+            </div>
+            <div class="course-content">
+              <div class="course-meta">
+                <span class="meta-item">⏱️ ${escapeHtml(course.duration || 'N/A')}</span>
+                <span class="meta-item">📖 ${course.lessons || 0} lessons</span>
+                <span class="meta-item">🎓 ${course.level || 'All'}</span>
+              </div>
+              
+              <span class="course-category">${escapeHtml(course.category)}</span>
+              <h3 class="course-title">${escapeHtml(course.title)}</h3>
+              <p class="course-description">${escapeHtml(course.description)}</p>
+              
+              ${course.rating > 0 ? `
+                <div class="rating-display">
+                  <span class="stars">${stars}</span>
+                  <span class="rating-number">${course.rating.toFixed(1)}</span>
+                  <span style="color: var(--muted); font-size: 13px;">(${course.students || 0} students)</span>
+                </div>
+              ` : ''}
+              
+              ${features.length > 0 ? `
+                <div class="course-features">
+                  ${features.slice(0, 3).map(f => `<span class="feature-tag">✓ ${escapeHtml(f)}</span>`).join('')}
+                </div>
+              ` : ''}
+              
+              <div class="course-instructor">
+                <span>👨‍🏫</span>
+                <span>${escapeHtml(course.instructor)}</span>
+              </div>
+              
+              <div class="price-section">
+                <div class="price">$${parseFloat(course.price).toFixed(2)}</div>
+              </div>
+              
+              <div class="course-actions">
+                <button class="btn btn-secondary" onclick="editCourse('${course.__backendId}')">✏️ Edit</button>
+                <button class="btn ${course.published ? 'btn-warning' : 'btn-success'}" onclick="togglePublish('${course.__backendId}')">
+                  ${course.published ? '📦 Unpublish' : '🚀 Publish'}
+                </button>
+                <button class="btn btn-danger" onclick="showDeleteConfirm('${course.__backendId}')">🗑️</button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
+        `;
+      }).join('');
+    }
 
-/* ---------- Admin Lists UI ---------- */
-function renderAdminCourseList(){
-  const node = document.getElementById('admin-course-list');
-  if(!node) return;
-  if(courses.length===0) { node.innerHTML = '<div class="muted">No courses</div>'; return; }
-  node.innerHTML = courses.map(c=>`
-    <div style="padding:8px;border-bottom:1px solid #f1f3f5;display:flex;justify-content:space-between;align-items:center">
-      <div style="flex:1">
-        <div style="font-weight:700">${escape(c.title)}</div>
-        <div class="small muted">${escape(c.desc.slice(0,80))}</div>
-        <div class="small muted">₹${c.price} • ${formatDate(c.createdAt)}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="display:flex;gap:6px">
-          <button class="btn ghost" onclick="editCourse('${c.id}')">Edit</button>
-          <button class="btn" onclick="deleteCourse('${c.id}')">Delete</button>
-        </div>
-        <div style="display:flex;gap:6px">
-          <button class="btn ghost" onclick="togglePublish('${c.id}')">${c.published? 'Unpublish' : 'Publish'}</button>
-          <button class="btn" onclick="forceGrantAccess('${c.id}')">Grant Access</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
+    function openCreateModal() {
+      editingCourse = null;
+      document.getElementById('modalTitle').textContent = 'Create New Course';
+      document.getElementById('submitText').textContent = 'Create Course';
+      document.getElementById('courseForm').reset();
+      document.getElementById('coursePublished').checked = true;
+      document.getElementById('courseStudents').value = '0';
+      document.getElementById('courseRating').value = '0';
+      document.getElementById('courseModal').classList.add('active');
+    }
 
-/* ---------- Purchases ---------- */
-function renderAdminPurchases(){
-  const node = document.getElementById('admin-purchase-list');
-  if(!node) return;
-  if(purchases.length===0){ node.innerHTML = '<div class="muted">No purchases yet</div>'; return; }
-  node.innerHTML = purchases.map(p=>{
-    const course = courses.find(c=>c.id===p.courseId);
-    return `
-      <div style="padding:8px;border-bottom:1px solid #f1f3f5">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-weight:700">${escape(course?course.title:'-')} — ₹${p.amount || (course?course.price:'-')}</div>
-            <div class="small muted">Buyer: ${escape(p.buyerName||'—')} • ${formatDate(p.createdAt)}</div>
-            <div class="small muted">Txn: ${escape(p.txn||'—')}</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <button class="btn ghost" onclick="verifyPurchase('${p.id}')">${p.verified? 'Verified' : 'Verify'}</button>
-            <button class="btn" onclick="revokePurchase('${p.id}')">Revoke</button>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
+    function editCourse(courseId) {
+      const course = courses.find(c => c.__backendId === courseId);
+      if (!course) return;
 
-function verifyPurchase(id){
-  const p = purchases.find(x=>x.id===id);
-  if(!p) return;
-  p.verified = true;
-  save(KEY_PURCHASES, purchases);
-  renderAdminPurchases();
-  toast('Purchase verified');
-}
+      editingCourse = course;
+      document.getElementById('modalTitle').textContent = 'Edit Course';
+      document.getElementById('submitText').textContent = 'Update Course';
+      
+      document.getElementById('courseTitle').value = course.title;
+      document.getElementById('courseDescription').value = course.description;
+      document.getElementById('courseInstructor').value = course.instructor;
+      document.getElementById('courseCategory').value = course.category;
+      document.getElementById('courseLevel').value = course.level;
+      document.getElementById('coursePrice').value = course.price;
+      document.getElementById('courseDuration').value = course.duration;
+      document.getElementById('courseLessons').value = course.lessons;
+      document.getElementById('courseStudents').value = course.students || 0;
+      document.getElementById('courseRating').value = course.rating || 0;
+      document.getElementById('thumbnailIcon').value = course.thumbnail_icon || '';
+      document.getElementById('courseFeatures').value = course.features || '';
+      document.getElementById('coursePublished').checked = course.published;
+      
+      document.getElementById('courseModal').classList.add('active');
+    }
 
-function revokePurchase(id){
-  if(!confirm('Revoke purchase?')) return;
-  purchases = purchases.filter(x=>x.id!==id);
-  save(KEY_PURCHASES, purchases);
-  renderAdminPurchases();
-  toast('Purchase revoked');
-}
+    async function togglePublish(courseId) {
+      const course = courses.find(c => c.__backendId === courseId);
+      if (!course) return;
 
-/* ---------- Buy Flow ---------- */
-let currentBuyCourseId = null;
-function openBuy(courseId){
-  currentBuyCourseId = courseId;
-  const c = courses.find(x=>x.id===courseId);
-  if(!c) return toast('Course not found');
-  // set UI
-  document.getElementById('buy-title').textContent = 'Buy — ' + c.title;
-  document.getElementById('buy-desc').textContent = c.desc;
-  document.getElementById('buy-price').textContent = c.price;
-  document.getElementById('upi-id').textContent = settings.upi || DEFAULT_SETTINGS.upi;
-  const payNote = encodeURIComponent('Purchase ' + c.title);
-  const amount = encodeURIComponent(String(c.price || 0));
-  const upiLink = buildUpiLink(amount, settings.upi || DEFAULT_SETTINGS.upi, c.title);
-  // QR via google chart (simple)
-  const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(upiLink)}`;
-  document.getElementById('qr-img').src = qrUrl;
-  document.getElementById('open-upi-btn').onclick = ()=> { window.location.href = upiLink; };
-  document.getElementById('paid-btn').onclick = ()=> { recordPayment(); };
-  openModal('modal-buy');
-}
+      const btn = event.target;
+      btn.disabled = true;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner"></span>';
 
-function buildUpiLink(amount = '', upi = DEFAULT_SETTINGS.upi, title = ''){
-  // upi://pay?pa=ID&pn=Name&tn=Note&am=AMOUNT&cu=INR
-  const pa = encodeURIComponent(upi);
-  const pn = encodeURIComponent('Sahil Rajheti');
-  const tn = encodeURIComponent(title || 'Purchase');
-  const am = amount ? `&am=${amount}` : '';
-  return `upi://pay?pa=${pa}&pn=${pn}&tn=${tn}${am}&cu=INR`;
-}
+      const result = await window.dataSdk.update({
+        ...course,
+        published: !course.published
+      });
 
-function recordPayment(){
-  const buyerName = prompt('Enter your name (optional):') || '';
-  const txn = prompt('Enter transaction reference/UPI txn id (optional):') || '';
-  const c = courses.find(x=>x.id===currentBuyCourseId);
-  const id = uid('p');
-  purchases.push({
-    id, courseId: currentBuyCourseId, courseTitle: c.title, amount: c.price, buyerName, txn, createdAt: Date.now(), verified: false
-  });
-  save(KEY_PURCHASES, purchases);
-  closeModal('modal-buy');
-  // grant local access (convenience) by adding a mapping in purchases — admin will verify later
-  document.getElementById('ty-text').textContent = 'Payment recorded. Click Open Course to access (admin should verify if required).';
-  document.getElementById('ty-open').onclick = ()=> openAccessFromPurchase(id);
-  showView('thankyou');
-  renderAdminPurchases();
-}
+      if (result.isOk) {
+        showToast(`Course ${!course.published ? 'published' : 'unpublished'} successfully!`);
+      } else {
+        showToast('Failed to update course status.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    }
 
-/* ---------- Access Logic ---------- */
-function openAccessIfPurchased(courseId){
-  // check purchases for this course (any verified or unverified)
-  const p = purchases.find(x=>x.courseId === courseId);
-  if(!p) return toast('You have not purchased this course. Click Buy to pay.');
-  openAccess(courseId);
-}
-function openAccessFromPurchase(purchaseId){
-  const p = purchases.find(x=>x.id===purchaseId);
-  if(!p) return toast('Purchase entry not found.');
-  openAccess(p.courseId);
-}
-function openAccess(courseId){
-  const c = courses.find(x=>x.id===courseId);
-  if(!c) return toast('Course not found');
-  document.getElementById('access-title').textContent = c.title;
-  document.getElementById('access-desc').textContent = c.desc;
-  const content = document.getElementById('access-content');
-  content.innerHTML = '';
-  if(c.file){
-    content.innerHTML = `<a class="btn" href="${escape(c.file)}" target="_blank" rel="noopener">Open / Download</a>`;
-  } else {
-    content.innerHTML = `<div class="muted">No access file set. Admin can add file URL in Manage panel.</div>`;
-  }
-  showView('access');
-}
+    function showDeleteConfirm(courseId) {
+      const card = event.target.closest('.course-card');
+      const actions = card.querySelector('.course-actions');
+      
+      actions.innerHTML = `
+        <button class="btn btn-secondary" onclick="cancelDelete()">✖️ Cancel</button>
+        <button class="btn btn-danger" onclick="confirmDelete('${courseId}')">✓ Confirm Delete</button>
+      `;
+    }
 
-function downloadAll(){ const c = courses.find(x=>x.id===currentBuyCourseId); if(c && c.file) window.open(c.file,'_blank'); else toast('No file'); }
+    function cancelDelete() {
+      renderCourses();
+    }
 
-/* ---------- Admin utilities ---------- */
-function forceGrantAccess(courseId){
-  // create a purchase marked verified for convenience
-  const id = uid('p');
-  const c = courses.find(x=>x.id===courseId);
-  purchases.push({ id, courseId, courseTitle: c.title, amount: c.price, buyerName: 'admin-grant', txn: 'admin', createdAt: Date.now(), verified: true });
-  save(KEY_PURCHASES, purchases);
-  renderAdminPurchases();
-  toast('Access granted (purchase created)');
-}
+    async function confirmDelete(courseId) {
+      const course = courses.find(c => c.__backendId === courseId);
+      if (!course) return;
 
-function copyLink(courseId){
-  const url = location.origin + location.pathname + '?course=' + courseId;
-  navigator.clipboard?.writeText(url).then(()=> toast('Link copied to clipboard'), ()=> toast('Copy failed'));
-}
+      const card = event.target.closest('.course-card');
+      const deleteBtn = event.target;
+      deleteBtn.disabled = true;
+      deleteBtn.innerHTML = '<span class="spinner"></span>';
 
-/* ---------- Export / Import / Reset ---------- */
-function exportData(){
-  const data = { courses, purchases, settings };
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'saeedi_export_' + new Date().toISOString().slice(0,10) + '.json';
-  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-}
+      const result = await window.dataSdk.delete(course);
+      
+      if (result.isOk) {
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.95)';
+        card.style.transition = 'all 0.3s';
+        showToast('Course deleted successfully!');
+      } else {
+        showToast('Failed to delete course.', 'error');
+        renderCourses();
+      }
+    }
 
-function importData(){
-  document.getElementById('import-file').click();
-}
-function handleImport(e){
-  const f = e.target.files[0];
-  if(!f) return;
-  const reader = new FileReader();
-  reader.onload = (ev)=>{
-    try{
-      const data = JSON.parse(ev.target.result);
-      if(Array.isArray(data.courses)) courses = data.courses;
-      if(Array.isArray(data.purchases)) purchases = data.purchases;
-      if(data.settings) settings = data.settings;
-      save(KEY_COURSES, courses);
-      save(KEY_PURCHASES, purchases);
-      save(KEY_SETTINGS, settings);
-      document.getElementById('admin-upi-input').value = settings.upi || DEFAULT_SETTINGS.upi;
-      toast('Import successful');
-      renderCourses(); renderAdminCourseList(); renderAdminPurchases();
-    }catch(err){ toast('Invalid JSON file', true); }
-  };
-  reader.readAsText(f);
-  e.target.value = '';
-}
+    async function handleSubmit(e) {
+      e.preventDefault();
 
-function resetAllConfirm(){
-  if(!confirm('Reset ALL data (courses, purchases, settings) — this CANNOT be undone. Continue?')) return;
-  localStorage.removeItem(KEY_COURSES);
-  localStorage.removeItem(KEY_PURCHASES);
-  localStorage.removeItem(KEY_SETTINGS);
-  sessionStorage.removeItem(KEY_ADMIN_SESSION);
-  courses = []; purchases = []; settings = DEFAULT_SETTINGS; adminSession = false;
-  renderCourses(); renderAdminCourseList(); renderAdminPurchases(); loadSettings();
-  toast('Reset complete');
-}
+      if (courses.length >= 999 && !editingCourse) {
+        showToast('Maximum limit of 999 courses reached. Please delete some courses first.', 'error');
+        return;
+      }
 
-/* ---------- Seed sample ---------- */
-function seedSample(){
-  if(courses.length>0 && !confirm('Courses exist — add sample anyway?')) return;
-  const sample = {
-    id: uid('c'),
-    title: 'Learn Urdu',
-    desc: 'Complete Learn Urdu course — basics to advanced.',
-    price: 499,
-    file: '',
-    image: '',
-    published: true,
-    createdAt: Date.now()
-  };
-  courses.unshift(sample);
-  save(KEY_COURSES, courses);
-  renderCourses();
-  renderAdminCourseList();
-  toast('Sample course added');
-}
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
 
-/* ---------- Utility UI ---------- */
-function updateStatusPill(){
-  const pill = document.getElementById('status-pill');
-  pill.textContent = adminSession ? 'Admin' : 'Public';
-}
+      const formData = {
+        title: document.getElementById('courseTitle').value.trim(),
+        description: document.getElementById('courseDescription').value.trim(),
+        instructor: document.getElementById('courseInstructor').value.trim(),
+        category: document.getElementById('courseCategory').value,
+        level: document.getElementById('courseLevel').value,
+        price: parseFloat(document.getElementById('coursePrice').value),
+        duration: document.getElementById('courseDuration').value.trim(),
+        lessons: parseInt(document.getElementById('courseLessons').value),
+        students: parseInt(document.getElementById('courseStudents').value) || 0,
+        rating: parseFloat(document.getElementById('courseRating').value) || 0,
+        thumbnail_icon: document.getElementById('thumbnailIcon').value.trim() || '📚',
+        features: document.getElementById('courseFeatures').value.trim(),
+        published: document.getElementById('coursePublished').checked,
+        created_at: editingCourse ? editingCourse.created_at : new Date().toISOString()
+      };
 
-/* ---------- Small helpers & safety ---------- */
-function escape(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
-function openModal(id){ document.getElementById(id).classList.add('active'); }
-function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+      let result;
+      if (editingCourse) {
+        result = await window.dataSdk.update({
+          ...editingCourse,
+          ...formData
+        });
+      } else {
+        result = await window.dataSdk.create(formData);
+      }
 
-/* ---------- Simple startup load ---------- */
-(function startup(){
-  // ensure settings exist
-  if(!settings) { settings = DEFAULT_SETTINGS; save(KEY_SETTINGS, settings); }
-  document.getElementById('admin-upi-input').value = settings.upi;
-  renderCourses();
+      if (result.isOk) {
+        showToast(`Course ${editingCourse ? 'updated' : 'created'} successfully!`);
+        closeModal();
+      } else {
+        showToast('Failed to save course. Please try again.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span id="submitText">${editingCourse ? 'Update' : 'Create'} Course</span>`;
+      }
+    }
 
-  // Auto open course if URL param present (share link)
-  const params = new URLSearchParams(location.search);
-  const cid = params.get('course');
-  if(cid){
-    // if purchased show; else show buy modal
-    const p = purchases.find(x=>x.courseId===cid && x.verified);
-    if(p) openAccess(cid); else openBuy(cid);
-  }
-})();
+    function closeModal() {
+      document.getElementById('courseModal').classList.remove('active');
+      document.getElementById('courseForm').reset();
+      editingCourse = null;
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<span id="submitText">Create Course</span>';
+    }
 
-/* ---------- Lightweight functions for saving ---------- */
-function save(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
-function saveCoursesToStorage(){ save(KEY_COURSES, courses); }
-function savePurchasesToStorage(){ save(KEY_PURCHASES, purchases); }
+    function handleSearch(e) {
+      currentFilter.search = e.target.value.trim();
+      renderCourses();
+    }
 
-/* ---------- Stubs used by UI (some buttons) ---------- */
-function adminLogout(){ adminSession=false; sessionStorage.removeItem(KEY_ADMIN_SESSION); showLoginBox(); updateStatusPill(); toast('Logged out'); }
+    function handleCategoryFilter(e) {
+      currentFilter.category = e.target.value;
+      renderCourses();
+    }
 
-/* ---------- Small DOM hookups ---------- */
-document.getElementById('search-input').addEventListener('input', renderCourses);
-document.getElementById('filter-select').addEventListener('change', renderCourses);
-document.getElementById('btn-login').addEventListener('click', openAdmin);
-document.getElementById('btn-upload').addEventListener('click', openAdmin);
+    function handleLevelFilter(e) {
+      currentFilter.level = e.target.value;
+      renderCourses();
+    }
 
-/* ---------- When saving lists ---------- */
-function saveCourses(){ save(KEY_COURSES, courses); renderCourses(); renderAdminCourseList(); }
-function savePurchases(){ save(KEY_PURCHASES, purchases); renderAdminPurchases(); }
+    function handleUnpublishedToggle(e) {
+      currentFilter.showUnpublished = e.target.checked;
+      renderCourses();
+    }
 
-/* ---------- End ---------- */
-</script>
-</body>
+    function showToast(message, type = 'success') {
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) {
+        existingToast.remove();
+      }
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <span style="font-size: 20px;">${type === 'error' ? '❌' : '✅'}</span>
+        <span>${message}</span>
+      `;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'slideUp 0.3s reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function hashCode(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      return Math.abs(hash);
+    }
+
+    document.getElementById('courseModal').addEventListener('click', (e) => {
+      if (e.target.id === 'courseModal') {
+        closeModal();
+      }
+    });
+
+    initializeApp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a423f33b26733cc',t:'MTc2NDA4NTI1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
